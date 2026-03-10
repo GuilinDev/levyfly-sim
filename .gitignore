@@ -5,3 +5,8 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+validation/polymarket/cache/
+validation/walmart/results/
+data/walmart_m5/sales_train.csv
+data/walmart_m5/calendar.csv
+data/walmart_m5/sell_prices.csv
