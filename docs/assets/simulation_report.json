@@ -1,0 +1,16 @@
+{
+  "total_days": 30,
+  "avg_fill_rate": 0.9988,
+  "min_fill_rate": 0.9964,
+  "min_fill_rate_day": 27,
+  "stockout_days": 2,
+  "total_stockout_events": 2,
+  "total_orders": 108,
+  "total_events": 406,
+  "total_decisions": 109,
+  "decision_breakdown": {
+    "reorder": 108,
+    "emergency_reorder": 1
+  },
+  "disruption_events": 2
+}
