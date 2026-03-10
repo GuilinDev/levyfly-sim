@@ -98,16 +98,16 @@ Full simulation data for downstream analysis: `docs/assets/simulation_report.jso
 ```
 Supply Chain Network          Simulation Engine          Visualization
 ┌─────────────┐              ┌──────────────────┐       ┌──────────────┐
-│ Suppliers    │──────────▶  │ Discrete-time    │──────▶│ Network View │
-│ Warehouses   │  Topology   │ Multi-agent sim  │ State │ Dashboard    │
-│ Stores       │              │                  │       │ Event Feed   │
-│ Transport    │              │ Agent decisions: │       │ Animated GIF │
+│ Suppliers   │──────────▶   │ Discrete-time    │──────▶│ Network View │
+│ Warehouses  │  Topology    │ Multi-agent sim  │ State │ Dashboard    │
+│ Stores      │              │                  │       │ Event Feed   │
+│ Transport   │              │ Agent decisions: │       │ Animated GIF │
 └─────────────┘              │ • Reorder logic  │       └──────────────┘
-                              │ • Disruption     │
-                              │   adaptation     │
-                              │ • Supplier       │
-                              │   switching      │
-                              └──────────────────┘
+                             │ • Disruption     │
+                             │   adaptation     │
+                             │ • Supplier       │
+                             │   switching      │
+                             └──────────────────┘
 ```
 
 ### Agent Types
