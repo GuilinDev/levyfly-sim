@@ -77,7 +77,11 @@ Agents made 99 autonomous decisions including 1 emergency reorder.
   4. 🟢 Implement demand forecasting (world model)
 ```
 
-### 3. Structured JSON
+### 3. Event Statistics Dashboard
+
+![Stats Chart](docs/assets/stats_chart.png)
+
+### 4. Structured JSON
 Full simulation data for downstream analysis: `docs/assets/simulation_report.json`
 
 | Metric | Value |

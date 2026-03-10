@@ -20,6 +20,7 @@ from simulation.engine import SupplyChainEngine
 from simulation.csv_loader import load_from_directory
 from simulation.report_generator import ReportGenerator
 from visualization.renderer import SupplyChainRenderer
+from visualization.stats_chart import generate_stats_chart
 
 
 def main():
@@ -97,6 +98,10 @@ def main():
         )
         file_size = os.path.getsize(gif_path) / 1024
         print(f"\n✅ Animation: {gif_path} ({file_size:.0f} KB)")
+
+    # ── Step 5: Generate stats chart ─────────────────────────
+    stats_path = os.path.join(args.output, "stats_chart.png")
+    generate_stats_chart(engine, stats_path)
 
     # ── Done ──────────────────────────────────────────────────
     print(f"\n{'=' * 60}")
