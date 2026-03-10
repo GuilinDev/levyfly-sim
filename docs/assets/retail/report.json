@@ -1,0 +1,588 @@
+{
+  "meta": {
+    "generated_at": "2026-03-10T15:39:18.716953",
+    "simulation_days": 30,
+    "network_size": {
+      "suppliers": 3,
+      "warehouses": 2,
+      "stores": 5,
+      "routes": 16
+    }
+  },
+  "executive_summary": {
+    "health_status": "HEALTHY",
+    "narrative": "Over 30 days of simulation with 2 disruption event(s), the supply chain achieved a 99.9% average fill rate with 2 stockout event(s). Agents made 99 autonomous decisions including 1 emergency reorder(s). Supply chain maintained excellent performance.",
+    "fill_rate": 0.9988,
+    "stockouts": 2,
+    "disruptions": 2
+  },
+  "kpi_dashboard": {
+    "fill_rate_timeline": [
+      {
+        "day": 1,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 2,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 3,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 4,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 5,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 6,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 7,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 8,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 9,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 10,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 11,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 12,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 13,
+        "fill_rate": 0.9976
+      },
+      {
+        "day": 14,
+        "fill_rate": 0.9978
+      },
+      {
+        "day": 15,
+        "fill_rate": 0.9979
+      },
+      {
+        "day": 16,
+        "fill_rate": 0.998
+      },
+      {
+        "day": 17,
+        "fill_rate": 0.9981
+      },
+      {
+        "day": 18,
+        "fill_rate": 0.9982
+      },
+      {
+        "day": 19,
+        "fill_rate": 0.9983
+      },
+      {
+        "day": 20,
+        "fill_rate": 0.9985
+      },
+      {
+        "day": 21,
+        "fill_rate": 0.9985
+      },
+      {
+        "day": 22,
+        "fill_rate": 0.9986
+      },
+      {
+        "day": 23,
+        "fill_rate": 0.9986
+      },
+      {
+        "day": 24,
+        "fill_rate": 0.9987
+      },
+      {
+        "day": 25,
+        "fill_rate": 0.9987
+      },
+      {
+        "day": 26,
+        "fill_rate": 0.9988
+      },
+      {
+        "day": 27,
+        "fill_rate": 0.9964
+      },
+      {
+        "day": 28,
+        "fill_rate": 0.9966
+      },
+      {
+        "day": 29,
+        "fill_rate": 0.9967
+      },
+      {
+        "day": 30,
+        "fill_rate": 0.9968
+      }
+    ],
+    "stockout_timeline": [
+      {
+        "day": 1,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 2,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 3,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 4,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 5,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 6,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 7,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 8,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 9,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 10,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 11,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 12,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 13,
+        "count": 1,
+        "cumulative": 1
+      },
+      {
+        "day": 14,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 15,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 16,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 17,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 18,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 19,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 20,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 21,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 22,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 23,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 24,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 25,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 26,
+        "count": 0,
+        "cumulative": 1
+      },
+      {
+        "day": 27,
+        "count": 1,
+        "cumulative": 2
+      },
+      {
+        "day": 28,
+        "count": 0,
+        "cumulative": 2
+      },
+      {
+        "day": 29,
+        "count": 0,
+        "cumulative": 2
+      },
+      {
+        "day": 30,
+        "count": 0,
+        "cumulative": 2
+      }
+    ],
+    "order_timeline": [
+      {
+        "day": 1,
+        "orders": 18
+      },
+      {
+        "day": 2,
+        "orders": 4
+      },
+      {
+        "day": 3,
+        "orders": 4
+      },
+      {
+        "day": 4,
+        "orders": 1
+      },
+      {
+        "day": 5,
+        "orders": 5
+      },
+      {
+        "day": 6,
+        "orders": 4
+      },
+      {
+        "day": 7,
+        "orders": 1
+      },
+      {
+        "day": 8,
+        "orders": 3
+      },
+      {
+        "day": 9,
+        "orders": 2
+      },
+      {
+        "day": 10,
+        "orders": 0
+      },
+      {
+        "day": 11,
+        "orders": 2
+      },
+      {
+        "day": 12,
+        "orders": 5
+      },
+      {
+        "day": 13,
+        "orders": 3
+      },
+      {
+        "day": 14,
+        "orders": 1
+      },
+      {
+        "day": 15,
+        "orders": 1
+      },
+      {
+        "day": 16,
+        "orders": 3
+      },
+      {
+        "day": 17,
+        "orders": 0
+      },
+      {
+        "day": 18,
+        "orders": 4
+      },
+      {
+        "day": 19,
+        "orders": 6
+      },
+      {
+        "day": 20,
+        "orders": 3
+      },
+      {
+        "day": 21,
+        "orders": 2
+      },
+      {
+        "day": 22,
+        "orders": 2
+      },
+      {
+        "day": 23,
+        "orders": 1
+      },
+      {
+        "day": 24,
+        "orders": 6
+      },
+      {
+        "day": 25,
+        "orders": 2
+      },
+      {
+        "day": 26,
+        "orders": 4
+      },
+      {
+        "day": 27,
+        "orders": 3
+      },
+      {
+        "day": 28,
+        "orders": 0
+      },
+      {
+        "day": 29,
+        "orders": 2
+      },
+      {
+        "day": 30,
+        "orders": 7
+      }
+    ]
+  },
+  "risk_analysis": {
+    "total_risks": 6,
+    "high_severity": 0,
+    "risks": [
+      {
+        "type": "limited_warehouse_access",
+        "severity": "MEDIUM",
+        "node": "R1",
+        "detail": "NYC Flagship has only 1 fast warehouse route(s). Cross-region backup adds 4 day delay.",
+        "recommendation": "Consider regional inventory pre-positioning."
+      },
+      {
+        "type": "limited_warehouse_access",
+        "severity": "MEDIUM",
+        "node": "R2",
+        "detail": "NJ Edison has only 1 fast warehouse route(s). Cross-region backup adds 4 day delay.",
+        "recommendation": "Consider regional inventory pre-positioning."
+      },
+      {
+        "type": "limited_warehouse_access",
+        "severity": "MEDIUM",
+        "node": "R3",
+        "detail": "Philly Store has only 1 fast warehouse route(s). Cross-region backup adds 4 day delay.",
+        "recommendation": "Consider regional inventory pre-positioning."
+      },
+      {
+        "type": "limited_warehouse_access",
+        "severity": "MEDIUM",
+        "node": "R4",
+        "detail": "LA Downtown has only 1 fast warehouse route(s). Cross-region backup adds 4 day delay.",
+        "recommendation": "Consider regional inventory pre-positioning."
+      },
+      {
+        "type": "limited_warehouse_access",
+        "severity": "MEDIUM",
+        "node": "R5",
+        "detail": "SF Mission has only 1 fast warehouse route(s). Cross-region backup adds 5 day delay.",
+        "recommendation": "Consider regional inventory pre-positioning."
+      },
+      {
+        "type": "long_lead_time",
+        "severity": "MEDIUM",
+        "detail": "8 route(s) have transit time ≥4 days. Long lead times amplify the bullwhip effect.",
+        "recommendation": "Explore regional sourcing or forward stocking."
+      }
+    ]
+  },
+  "bottlenecks": [
+    {
+      "node_id": "R5",
+      "name": "SF Mission",
+      "issue": "frequent_stockouts",
+      "stockout_count": 1,
+      "recommendation": "Increase safety stock or reorder point for SF Mission."
+    },
+    {
+      "node_id": "R3",
+      "name": "Philly Store",
+      "issue": "frequent_stockouts",
+      "stockout_count": 1,
+      "recommendation": "Increase safety stock or reorder point for Philly Store."
+    }
+  ],
+  "agent_behavior_analysis": {
+    "agents_active": 7,
+    "decision_by_agent": {
+      "R1": {
+        "reorder": 15,
+        "emergency_reorder": 0
+      },
+      "R2": {
+        "reorder": 16,
+        "emergency_reorder": 0
+      },
+      "R3": {
+        "reorder": 15,
+        "emergency_reorder": 0
+      },
+      "R4": {
+        "reorder": 15,
+        "emergency_reorder": 0
+      },
+      "R5": {
+        "reorder": 15,
+        "emergency_reorder": 0
+      },
+      "W1": {
+        "reorder": 14,
+        "emergency_reorder": 0
+      },
+      "W2": {
+        "reorder": 8,
+        "emergency_reorder": 1
+      }
+    },
+    "emergency_decisions": [
+      {
+        "day": 21,
+        "agent": "W2",
+        "reasoning": "Primary supplier disrupted. Emergency order from Sichuan Spice Co. (partial: 200/600)",
+        "details": {
+          "product": "chili_oil",
+          "qty": 200,
+          "from": "S1"
+        }
+      }
+    ],
+    "adaptability_score": 0.5
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Inventory",
+      "action": "Increase safety stock at R3, R5",
+      "rationale": "2 stockout events detected. Current reorder points are insufficient for demand volatility.",
+      "estimated_impact": "Reduce stockouts by 60-80%"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Operations",
+      "action": "Formalize emergency reorder protocols",
+      "rationale": "Agents triggered 1 emergency reorder(s). Formalizing this into SOPs ensures consistent response.",
+      "estimated_impact": "Faster recovery from disruptions"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Logistics",
+      "action": "Reduce transit time for 8 slow routes",
+      "rationale": "Long lead times amplify demand uncertainty and delay disruption recovery.",
+      "estimated_impact": "Improve responsiveness by 30-40%"
+    },
+    {
+      "priority": "LOW",
+      "category": "Planning",
+      "action": "Implement demand forecasting model",
+      "rationale": "Current reorder logic is reactive. Predictive models (world model) can anticipate demand spikes and pre-position inventory.",
+      "estimated_impact": "Reduce stockouts by additional 20-30%"
+    }
+  ],
+  "disruption_impact": [
+    {
+      "disruption": {
+        "day": 7,
+        "node": "S1",
+        "description": "Factory fire — production halted"
+      },
+      "cascade_effect": {
+        "stockouts_after": 2,
+        "fill_rate_before": 1.0,
+        "fill_rate_after": 0.9985,
+        "fill_rate_impact": 0.0015,
+        "propagation_delay_days": 6
+      },
+      "insight": "Disruption at S1 on Day 7 caused first stockout after {propagation_delay} days. Fill rate dropped from 100.0% to 99.8%."
+    },
+    {
+      "disruption": {
+        "day": 17,
+        "node": "S2",
+        "description": "Regional flooding — supply cut"
+      },
+      "cascade_effect": {
+        "stockouts_after": 1,
+        "fill_rate_before": 0.9995,
+        "fill_rate_after": 0.998,
+        "fill_rate_impact": 0.0015,
+        "propagation_delay_days": 10
+      },
+      "insight": "Disruption at S2 on Day 17 caused first stockout after {propagation_delay} days. Fill rate dropped from 99.9% to 99.8%."
+    }
+  ]
+}

@@ -135,8 +135,14 @@ class SupplyChainEngine:
             if self.day % 7 in [5, 6]:
                 demand = int(demand * 1.5)
 
-            for product in ["spice_base", "chili_oil"]:
-                product_demand = demand if product == "spice_base" else int(demand * 0.6)
+            # Consume from all products in store inventory (domain-agnostic)
+            store_products = list(store.inventory.keys())
+            if not store_products:
+                continue
+
+            for idx, product in enumerate(store_products):
+                # Primary product gets full demand, others get proportional
+                product_demand = demand if idx == 0 else int(demand * 0.6)
                 self.total_demand += product_demand
                 available = store.inventory.get(product, 0)
 

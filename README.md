@@ -127,17 +127,31 @@ Supply Chain Network          Simulation Engine          Visualization
 - [ ] Multi-scenario comparison (Monte Carlo simulation)
 - [ ] Integration with LeRobot for physical warehouse automation
 
+## 🔄 Cross-Domain Extensibility
+
+**Same engine. Different CSV configs. Three industries. Zero code changes.**
+
+```bash
+python run_all_domains.py
+```
+
+| Domain | Config | Fill Rate | Stockouts | Status |
+|--------|--------|-----------|-----------|--------|
+| 🍜 **Retail Supply Chain** | `data/` | 99.9% | 2 | HEALTHY |
+| 🏥 **Healthcare Supply Chain** | `data/healthcare/` | 98.0% | 21 | AT RISK |
+| 💹 **Financial Data Pipeline** | `data/finance/` | 100.0% | 0 | HEALTHY |
+
+Each domain has different agents, products, disruption scenarios, and risk profiles — but runs on the **identical simulation engine**. Extensibility to new domains requires only CSV configuration, no code changes.
+
+| Domain | Agents | Disruptions | Key Insight |
+|--------|--------|-------------|------------|
+| Retail | Spice suppliers → DCs → Stores | Factory fire, flooding | 6-day cascade propagation |
+| Healthcare | Pharma → Hospital DCs → Clinics | FDA recall, PPE shortage | Critical medication stockouts under recall |
+| Finance | Data feeds → Risk engines → Trading desks | Flash crash, model failure | Low-latency pipelines self-heal fastest |
+
 ## 📄 Research Context
 
-LevyFly builds on the insight that **domain-agnostic multi-agent simulation** can be applied across industries:
-
-| Domain | Agents | Events | Metrics |
-|--------|--------|--------|---------|
-| **Supply Chain** (this repo) | Suppliers, warehouses, stores | Disruptions, demand spikes | Fill rate, stockouts |
-| Healthcare | Caregivers, patients | Medical events, shift changes | Response time, care quality |
-| Finance | Traders, market makers | Price shocks, news | Returns, risk exposure |
-
-The same simulation framework, different domain configurations. See our upcoming research for formal evaluation.
+LevyFly builds on the insight that **domain-agnostic multi-agent simulation** can be applied across industries. The same simulation framework, different domain configurations. See our upcoming research for formal evaluation.
 
 ## 🤝 Team
 

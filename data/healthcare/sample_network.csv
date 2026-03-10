@@ -1,0 +1,11 @@
+node_id,name,type,capacity,region,x,y
+S1,Pharma Manufacturer,supplier,10000,New Jersey,50,100
+S2,Medical Device Co.,supplier,5000,Minnesota,50,300
+S3,PPE Supplier,supplier,8000,Georgia,50,500
+W1,Regional Hospital DC,warehouse,15000,Philadelphia,350,180
+W2,Southern Hub,warehouse,12000,Atlanta,350,420
+R1,City General Hospital,store,2000,Manhattan,650,60
+R2,Community Clinic East,store,800,Brooklyn,650,180
+R3,Urgent Care Center,store,500,Philadelphia,650,300
+R4,Southern Medical Center,store,1500,Atlanta,650,420
+R5,Rural Health Clinic,store,400,Savannah,650,540

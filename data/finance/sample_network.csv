@@ -1,0 +1,11 @@
+node_id,name,type,capacity,region,x,y
+S1,NYSE Market Data,supplier,100000,New York,50,100
+S2,NASDAQ Feed,supplier,80000,New York,50,300
+S3,Alternative Data Provider,supplier,50000,Chicago,50,500
+W1,Risk Engine,warehouse,50000,New York,350,180
+W2,Compliance Engine,warehouse,30000,New Jersey,350,420
+R1,Equities Desk,store,10000,New York,650,60
+R2,Fixed Income Desk,store,8000,New York,650,180
+R3,Derivatives Desk,store,5000,Chicago,650,300
+R4,Algo Trading,store,20000,New Jersey,650,420
+R5,Client Advisory,store,3000,Boston,650,540

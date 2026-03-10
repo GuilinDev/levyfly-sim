@@ -1,0 +1,475 @@
+{
+  "meta": {
+    "generated_at": "2026-03-10T15:39:21.384163",
+    "simulation_days": 30,
+    "network_size": {
+      "suppliers": 3,
+      "warehouses": 2,
+      "stores": 5,
+      "routes": 16
+    }
+  },
+  "executive_summary": {
+    "health_status": "HEALTHY",
+    "narrative": "Over 30 days of simulation with 2 disruption event(s), the supply chain achieved a 100.0% average fill rate with 0 stockout event(s). Agents made 4 autonomous decisions including 0 emergency reorder(s). Supply chain maintained excellent performance.",
+    "fill_rate": 1.0,
+    "stockouts": 0,
+    "disruptions": 2
+  },
+  "kpi_dashboard": {
+    "fill_rate_timeline": [
+      {
+        "day": 1,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 2,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 3,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 4,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 5,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 6,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 7,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 8,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 9,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 10,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 11,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 12,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 13,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 14,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 15,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 16,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 17,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 18,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 19,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 20,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 21,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 22,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 23,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 24,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 25,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 26,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 27,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 28,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 29,
+        "fill_rate": 1.0
+      },
+      {
+        "day": 30,
+        "fill_rate": 1.0
+      }
+    ],
+    "stockout_timeline": [
+      {
+        "day": 1,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 2,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 3,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 4,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 5,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 6,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 7,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 8,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 9,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 10,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 11,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 12,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 13,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 14,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 15,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 16,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 17,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 18,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 19,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 20,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 21,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 22,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 23,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 24,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 25,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 26,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 27,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 28,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 29,
+        "count": 0,
+        "cumulative": 0
+      },
+      {
+        "day": 30,
+        "count": 0,
+        "cumulative": 0
+      }
+    ],
+    "order_timeline": [
+      {
+        "day": 1,
+        "orders": 0
+      },
+      {
+        "day": 2,
+        "orders": 0
+      },
+      {
+        "day": 3,
+        "orders": 0
+      },
+      {
+        "day": 4,
+        "orders": 0
+      },
+      {
+        "day": 5,
+        "orders": 0
+      },
+      {
+        "day": 6,
+        "orders": 0
+      },
+      {
+        "day": 7,
+        "orders": 0
+      },
+      {
+        "day": 8,
+        "orders": 0
+      },
+      {
+        "day": 9,
+        "orders": 0
+      },
+      {
+        "day": 10,
+        "orders": 0
+      },
+      {
+        "day": 11,
+        "orders": 0
+      },
+      {
+        "day": 12,
+        "orders": 0
+      },
+      {
+        "day": 13,
+        "orders": 0
+      },
+      {
+        "day": 14,
+        "orders": 0
+      },
+      {
+        "day": 15,
+        "orders": 0
+      },
+      {
+        "day": 16,
+        "orders": 0
+      },
+      {
+        "day": 17,
+        "orders": 0
+      },
+      {
+        "day": 18,
+        "orders": 1
+      },
+      {
+        "day": 19,
+        "orders": 0
+      },
+      {
+        "day": 20,
+        "orders": 1
+      },
+      {
+        "day": 21,
+        "orders": 0
+      },
+      {
+        "day": 22,
+        "orders": 0
+      },
+      {
+        "day": 23,
+        "orders": 0
+      },
+      {
+        "day": 24,
+        "orders": 1
+      },
+      {
+        "day": 25,
+        "orders": 0
+      },
+      {
+        "day": 26,
+        "orders": 0
+      },
+      {
+        "day": 27,
+        "orders": 1
+      },
+      {
+        "day": 28,
+        "orders": 0
+      },
+      {
+        "day": 29,
+        "orders": 0
+      },
+      {
+        "day": 30,
+        "orders": 0
+      }
+    ]
+  },
+  "risk_analysis": {
+    "total_risks": 0,
+    "high_severity": 0,
+    "risks": []
+  },
+  "bottlenecks": [],
+  "agent_behavior_analysis": {
+    "agents_active": 1,
+    "decision_by_agent": {
+      "R5": {
+        "reorder": 4,
+        "emergency_reorder": 0
+      }
+    },
+    "emergency_decisions": [],
+    "adaptability_score": 0.0
+  },
+  "recommendations": [
+    {
+      "priority": "LOW",
+      "category": "Planning",
+      "action": "Implement demand forecasting model",
+      "rationale": "Current reorder logic is reactive. Predictive models (world model) can anticipate demand spikes and pre-position inventory.",
+      "estimated_impact": "Reduce stockouts by additional 20-30%"
+    }
+  ],
+  "disruption_impact": [
+    {
+      "disruption": {
+        "day": 4,
+        "node": "S1",
+        "description": "NYSE flash crash — market data feed interrupted"
+      },
+      "cascade_effect": {
+        "stockouts_after": 0,
+        "fill_rate_before": 1.0,
+        "fill_rate_after": 1.0,
+        "fill_rate_impact": 0.0,
+        "propagation_delay_days": null
+      },
+      "insight": "Disruption at S1 on Day 4 had no immediate stockout impact. Fill rate dropped from 100.0% to 100.0%."
+    },
+    {
+      "disruption": {
+        "day": 14,
+        "node": "W1",
+        "description": "Risk model failure — engine recalibration required"
+      },
+      "cascade_effect": {
+        "stockouts_after": 0,
+        "fill_rate_before": 1.0,
+        "fill_rate_after": 1.0,
+        "fill_rate_impact": 0.0,
+        "propagation_delay_days": null
+      },
+      "insight": "Disruption at W1 on Day 14 had no immediate stockout impact. Fill rate dropped from 100.0% to 100.0%."
+    }
+  ]
+}
