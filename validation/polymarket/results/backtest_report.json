@@ -1,0 +1,103 @@
+{
+  "summary": {
+    "markets_tested": 10,
+    "agent_avg_brier": 0.0893,
+    "market_avg_brier": 0.0933,
+    "agent_wins": 2,
+    "market_wins": 8,
+    "win_rate": 0.2,
+    "improvement": 0.043
+  },
+  "results": [
+    {
+      "question": "Will Donald Trump win the 2024 US Presidential Election?",
+      "outcome": "Yes",
+      "volume": "$1,531,479,285",
+      "snapshots": 307,
+      "agent_brier": 0.2304,
+      "market_brier": 0.2275,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Will the Sacramento Kings win the 2025 NBA Finals?",
+      "outcome": "No",
+      "volume": "$378,011,507",
+      "snapshots": 205,
+      "agent_brier": 0.0011,
+      "market_brier": 0.0001,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Will the Panthers win Super Bowl 2025?",
+      "outcome": "No",
+      "volume": "$139,314,924",
+      "snapshots": 160,
+      "agent_brier": 0.0008,
+      "market_brier": 0.0,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Will Aston Villa win the UEFA Champions League?",
+      "outcome": "No",
+      "volume": "$133,113,813",
+      "snapshots": 211,
+      "agent_brier": 0.002,
+      "market_brier": 0.0004,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Nottingham Forest wins the Premier League?",
+      "outcome": "No",
+      "volume": "$101,429,202",
+      "snapshots": 216,
+      "agent_brier": 0.001,
+      "market_brier": 0.0001,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Will the Tennessee Titans win Super Bowl 2026?",
+      "outcome": "No",
+      "volume": "$70,848,160",
+      "snapshots": 214,
+      "agent_brier": 0.001,
+      "market_brier": 0.0001,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Fed decreases interest rates by 50+ bps after January 2026 m",
+      "outcome": "No",
+      "volume": "$235,065,167",
+      "snapshots": 134,
+      "agent_brier": 0.0067,
+      "market_brier": 0.004,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "Kamala Harris wins the popular vote?",
+      "outcome": "No",
+      "volume": "$163,779,787",
+      "snapshots": 308,
+      "agent_brier": 0.1628,
+      "market_brier": 0.1756,
+      "winner": "\ud83e\udd16 Agent"
+    },
+    {
+      "question": "Will Trump nominate Judy Shelton as the next Fed chair?",
+      "outcome": "No",
+      "volume": "$127,684,065",
+      "snapshots": 212,
+      "agent_brier": 0.0015,
+      "market_brier": 0.0003,
+      "winner": "\ud83d\udcca Market"
+    },
+    {
+      "question": "US strikes Iran by February 28, 2026?",
+      "outcome": "Yes",
+      "volume": "$89,652,867",
+      "snapshots": 40,
+      "agent_brier": 0.4853,
+      "market_brier": 0.5246,
+      "winner": "\ud83e\udd16 Agent"
+    }
+  ]
+}
