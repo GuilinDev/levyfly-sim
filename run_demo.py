@@ -1,119 +1,108 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-LevyFly Supply Chain Simulation — Demo Runner
-Generates animated GIF of a 30-day supply chain simulation
-with a disruption event on Day 12.
+LevyFly Supply Chain Simulation — End-to-End Demo
+
+Usage:
+  python run_demo.py                    # Run with built-in demo network
+  python run_demo.py --data ./data/     # Load from CSV files in directory
+  python run_demo.py --data ./data/ --days 60 --no-gif
 """
 import os
 import sys
 import json
+import argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from simulation.network import build_demo_network
 from simulation.engine import SupplyChainEngine
+from simulation.csv_loader import load_from_directory
+from simulation.report_generator import ReportGenerator
 from visualization.renderer import SupplyChainRenderer
 
 
-def run_demo():
+def main():
+    parser = argparse.ArgumentParser(description="⚡ LevyFly Supply Chain Simulation")
+    parser.add_argument("--data", type=str, default=None,
+                        help="Path to directory containing CSV files (network.csv, routes.csv, etc.)")
+    parser.add_argument("--days", type=int, default=30,
+                        help="Number of days to simulate (default: 30)")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Random seed for reproducibility")
+    parser.add_argument("--no-gif", action="store_true",
+                        help="Skip GIF generation")
+    parser.add_argument("--output", type=str, default="docs/assets",
+                        help="Output directory for reports and GIF")
+    args = parser.parse_args()
+
     print("=" * 60)
-    print("⚡ LevyFly — Supply Chain Simulation Demo")
+    print("⚡ LevyFly — Agentic Supply Chain Simulation")
     print("=" * 60)
 
-    # 1. Build network
-    print("\n📡 Building supply chain network...")
-    network = build_demo_network()
-    print(f"   Suppliers:  {len(network.get_suppliers())}")
-    print(f"   Warehouses: {len(network.get_warehouses())}")
-    print(f"   Stores:     {len(network.get_stores())}")
-    print(f"   Routes:     {len(network.edges)}")
+    # ── Step 1: Load data ──────────────────────────────────────
+    if args.data:
+        print(f"\n📂 Loading supply chain from: {args.data}")
+        network, disruptions = load_from_directory(args.data)
+    else:
+        print("\n📡 Using built-in demo network...")
+        network = build_demo_network()
+        disruptions = [
+            {"day": 8, "node_id": "S1", "duration": 12,
+             "description": "🔥 Sichuan Spice Co. factory fire — production halted for 12 days"},
+            {"day": 18, "node_id": "S2", "duration": 5,
+             "description": "🌊 Yunnan flooding — fresh produce supply cut for 5 days"},
+        ]
 
-    # 2. Initialize engine
-    print("\n🔧 Initializing simulation engine...")
-    engine = SupplyChainEngine(network, seed=42)
+    print(f"   Network: {len(network.get_suppliers())}S → {len(network.get_warehouses())}W → {len(network.get_stores())}R")
+    print(f"   Routes:  {len(network.edges)}")
 
-    # 3. Define disruption scenario
-    disruptions = [
-        {
-            "day": 8,
-            "node_id": "S1",
-            "duration": 12,
-            "description": "🔥 Sichuan Spice Co. factory fire — production halted for 12 days"
-        },
-        {
-            "day": 18,
-            "node_id": "S2",
-            "duration": 5,
-            "description": "🌊 Yunnan flooding — fresh produce supply cut for 5 days"
-        }
-    ]
-    print(f"\n⚠️  Scheduled disruptions:")
-    for d in disruptions:
-        print(f"   Day {d['day']}: {d['description']}")
+    # ── Step 2: Run simulation ────────────────────────────────
+    print(f"\n🚀 Simulating {args.days} days...")
+    engine = SupplyChainEngine(network, seed=args.seed)
 
-    # 4. Run simulation
-    print(f"\n🚀 Running 30-day simulation...")
-    snapshots = engine.run(days=30, disruptions=disruptions)
+    if disruptions:
+        print(f"   Scheduled disruptions:")
+        for d in disruptions:
+            print(f"     Day {d['day']}: {d.get('description', d['node_id'] + ' disrupted')}")
 
-    # 5. Generate report
-    report = engine.get_summary_report()
-    print(f"\n📊 Simulation Complete!")
-    print(f"   Average Fill Rate: {report['avg_fill_rate']:.1%}")
-    print(f"   Lowest Fill Rate:  {report['min_fill_rate']:.1%} (Day {report['min_fill_rate_day']})")
-    print(f"   Stockout Events:   {report['total_stockout_events']}")
-    print(f"   Total Orders:      {report['total_orders']}")
-    print(f"   Agent Decisions:   {report['total_decisions']}")
-    print(f"   Decision Types:    {report['decision_breakdown']}")
+    snapshots = engine.run(days=args.days, disruptions=disruptions)
 
-    # 6. Save report JSON
-    os.makedirs("docs/assets", exist_ok=True)
-    report_path = "docs/assets/simulation_report.json"
-    with open(report_path, "w") as f:
-        json.dump(report, f, indent=2)
-    print(f"\n💾 Report saved to {report_path}")
+    # ── Step 3: Generate report ───────────────────────────────
+    print(f"\n📋 Generating report...")
+    reporter = ReportGenerator(engine)
+    reporter.print_report_summary()
 
-    # 7. Render animation
-    print(f"\n🎬 Rendering {len(snapshots)} frames...")
-    renderer = SupplyChainRenderer(network)
+    os.makedirs(args.output, exist_ok=True)
+    report_path = os.path.join(args.output, "simulation_report.json")
+    reporter.save_report(report_path)
+    print(f"\n💾 Full report: {report_path}")
 
-    frames = []
-    for i, snapshot in enumerate(snapshots):
-        frame = renderer.render_frame(snapshot)
-        frames.append(frame)
-        if (i + 1) % 10 == 0:
-            print(f"   Rendered {i+1}/{len(snapshots)} frames")
+    # ── Step 4: Generate visualization ────────────────────────
+    if not args.no_gif:
+        print(f"\n🎬 Rendering {len(snapshots)} frames...")
+        renderer = SupplyChainRenderer(network)
 
-    # 8. Save GIF
-    gif_path = "docs/assets/supply_chain_sim.gif"
-    frames[0].save(
-        gif_path,
-        save_all=True,
-        append_images=frames[1:],
-        duration=600,  # 600ms per frame
-        loop=0
-    )
-    file_size = os.path.getsize(gif_path) / 1024
-    print(f"\n✅ Animation saved: {gif_path} ({file_size:.0f} KB)")
+        frames = []
+        for i, snapshot in enumerate(snapshots):
+            frame = renderer.render_frame(snapshot)
+            frames.append(frame)
+            if (i + 1) % 10 == 0:
+                print(f"   Rendered {i+1}/{len(snapshots)} frames")
 
-    # 9. Print key events timeline
-    print(f"\n📅 Key Events Timeline:")
-    for snapshot in snapshots:
-        critical = [e for e in snapshot.events if e.severity in ("warning", "critical")]
-        emergency = [d for d in snapshot.decisions if d.action == "emergency_reorder"]
-        if critical or emergency:
-            print(f"\n   Day {snapshot.day}:")
-            for e in critical:
-                print(f"     {e.description}")
-            for d in emergency:
-                print(f"     🤖 {d.agent_id}: {d.reasoning}")
+        gif_path = os.path.join(args.output, "supply_chain_sim.gif")
+        frames[0].save(
+            gif_path, save_all=True, append_images=frames[1:],
+            duration=600, loop=0
+        )
+        file_size = os.path.getsize(gif_path) / 1024
+        print(f"\n✅ Animation: {gif_path} ({file_size:.0f} KB)")
 
+    # ── Done ──────────────────────────────────────────────────
     print(f"\n{'=' * 60}")
-    print(f"Demo complete. Files generated:")
-    print(f"  📊 {report_path}")
-    print(f"  🎬 {gif_path}")
+    print(f"✅ End-to-end pipeline complete!")
     print(f"{'=' * 60}")
 
 
 if __name__ == "__main__":
-    run_demo()
+    main()

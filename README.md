@@ -24,13 +24,61 @@ pip install Pillow
 python run_demo.py
 ```
 
-The demo simulates a 30-day retail supply chain with:
+### Bring Your Own Data
+
+Drop CSV files into a directory and point LevyFly at it:
+
+```bash
+python run_demo.py --data ./data/ --days 60
+```
+
+**Required CSVs:**
+| File | Columns |
+|------|---------|
+| `*network*.csv` | `node_id, name, type, capacity, region, x, y` |
+| `*routes*.csv` | `source, target, transit_days, cost_per_unit` |
+| `*inventory*.csv` | `node_id, product, quantity` |
+| `*disruptions*.csv` | `day, node_id, duration, description` |
+
+See [`data/`](data/) for examples. That's it — LevyFly auto-builds the network and runs end-to-end.
+
+### Built-in Demo
+
+The default demo simulates a 30-day retail supply chain with:
 - 3 Suppliers → 2 Distribution Centers → 5 Retail Stores
 - **Day 8**: Major supplier factory fire (12-day disruption)
 - **Day 18**: Secondary supplier flooding (5-day disruption)
 - Watch how agents autonomously adapt: emergency reorders, supplier switching, inventory rebalancing
 
-## 📊 Demo Output
+## 📊 End-to-End Output
+
+LevyFly generates three deliverables from a single run:
+
+### 1. Animated Visualization
+Real-time network view with inventory levels, agent decisions, and event feed.
+
+### 2. Actionable Report
+```
+📋 LEVYFLY SIMULATION REPORT
+══════════════════════════════════════════
+
+🟢 Status: HEALTHY
+Over 30 days with 2 disruptions, fill rate 99.9%, 2 stockout events.
+Agents made 99 autonomous decisions including 1 emergency reorder.
+
+⚠️ RISKS (6 identified)
+🔍 BOTTLENECKS: SF Mission, Philly Store
+💥 DISRUPTION CASCADE: 6-day propagation delay from supplier to store
+
+✅ RECOMMENDATIONS:
+  1. 🔴 Increase safety stock at R5, R3
+  2. 🟡 Formalize emergency reorder protocols  
+  3. 🟡 Reduce transit time for 8 slow routes
+  4. 🟢 Implement demand forecasting (world model)
+```
+
+### 3. Structured JSON
+Full simulation data for downstream analysis: `docs/assets/simulation_report.json`
 
 | Metric | Value |
 |--------|-------|
@@ -38,11 +86,8 @@ The demo simulates a 30-day retail supply chain with:
 | Fill Rate | 99.9% (despite 2 major disruptions) |
 | Stockout Events | 2 (contained by agent intervention) |
 | Emergency Reorders | 1 (autonomous supplier switching) |
-| Total Agent Decisions | 109 |
-
-**Output files:**
-- `docs/assets/supply_chain_sim.gif` — Animated simulation visualization
-- `docs/assets/simulation_report.json` — Full metrics report
+| Agent Decisions | 99 total |
+| Disruption Cascade | 6-day propagation delay |
 
 ## 🏗️ Architecture
 

@@ -1,0 +1,11 @@
+node_id,name,type,capacity,region,x,y
+S1,Sichuan Spice Co.,supplier,5000,Chengdu,50,100
+S2,Yunnan Fresh Foods,supplier,3000,Kunming,50,300
+S3,Guangdong Packaging,supplier,8000,Shenzhen,50,500
+W1,East Coast DC,warehouse,10000,New Jersey,350,180
+W2,West Coast DC,warehouse,8000,Los Angeles,350,420
+R1,NYC Flagship,store,500,Manhattan,650,60
+R2,NJ Edison,store,500,Edison NJ,650,180
+R3,Philly Store,store,500,Philadelphia,650,300
+R4,LA Downtown,store,500,Los Angeles,650,420
+R5,SF Mission,store,500,San Francisco,650,540
