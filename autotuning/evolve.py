@@ -52,32 +52,68 @@ def write_file(path: Path, content: str):
         f.write(content)
 
 
-def call_ollama(prompt: str, model: str = "mistral-small3.2:24b",
-                max_tokens: int = 4000, temperature: float = 0.7) -> str:
-    """Call local LLM via Ollama HTTP API."""
+def call_llm(prompt: str, model: str = "openai/gpt-oss-120b",
+             max_tokens: int = 4000, temperature: float = 0.7,
+             provider: str = "auto") -> str:
+    """
+    Call LLM via Groq API (fast, cheap) or local Ollama (free, slow).
+    
+    Provider auto-detection:
+      - If GROQ_API_KEY is set → use Groq
+      - Otherwise → use local Ollama
+    """
     import urllib.request
     import urllib.error
 
-    body = json.dumps({
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-        "options": {
-            "num_predict": max_tokens,
+    groq_key = os.environ.get("GROQ_API_KEY", "")
+    
+    if provider == "auto":
+        provider = "groq" if groq_key else "ollama"
+    
+    if provider == "groq":
+        body = json.dumps({
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_tokens,
             "temperature": temperature,
-        }
-    }).encode("utf-8")
+        }).encode("utf-8")
 
-    req = urllib.request.Request(
-        "http://localhost:11434/api/generate",
-        data=body,
-        headers={"Content-Type": "application/json"},
-        method="POST"
-    )
+        req = urllib.request.Request(
+            "https://api.groq.com/openai/v1/chat/completions",
+            data=body,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {groq_key}",
+                "User-Agent": "LevyFly-Evolution/1.0",
+            },
+            method="POST"
+        )
 
-    with urllib.request.urlopen(req, timeout=300) as response:
-        data = json.loads(response.read().decode("utf-8"))
-        return data.get("response", "").strip()
+        with urllib.request.urlopen(req, timeout=120) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"].strip()
+    
+    else:  # ollama
+        body = json.dumps({
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "num_predict": max_tokens,
+                "temperature": temperature,
+            }
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            "http://localhost:11434/api/generate",
+            data=body,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+
+        with urllib.request.urlopen(req, timeout=300) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            return data.get("response", "").strip()
 
 
 def evaluate_policy() -> dict:
@@ -257,7 +293,7 @@ def run_evolution(rounds: int = 5, model: str = "mistral-small3.2:24b"):
         prompt = build_evolution_prompt(strategy, current_code, history, round_num)
         
         try:
-            response = call_ollama(prompt, model=model, temperature=0.7 + round_num * 0.05)
+            response = call_llm(prompt, model=model, temperature=0.7 + round_num * 0.05)
         except Exception as e:
             print(f"   ❌ LLM call failed: {e}")
             continue
@@ -407,8 +443,11 @@ def run_evolution(rounds: int = 5, model: str = "mistral-small3.2:24b"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="🧬 Code Evolution Loop")
     parser.add_argument("--rounds", type=int, default=5, help="Number of evolution rounds")
-    parser.add_argument("--model", type=str, default="mistral-small3.2:24b",
-                        help="Ollama model to use")
+    parser.add_argument("--model", type=str, default="openai/gpt-oss-120b",
+                        help="Model to use (Groq: openai/gpt-oss-120b, meta-llama/llama-4-scout-17b-16e-instruct; Ollama: mistral-small3.2:24b)")
+    parser.add_argument("--provider", type=str, default="auto",
+                        choices=["auto", "groq", "ollama"],
+                        help="LLM provider (auto-detects GROQ_API_KEY)")
     args = parser.parse_args()
     
     run_evolution(rounds=args.rounds, model=args.model)

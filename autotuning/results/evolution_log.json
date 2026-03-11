@@ -7,39 +7,91 @@
     "excess_ratio": 0.7187,
     "hypothesis": "Grid search optimal (baseline)",
     "improved": true,
-    "timestamp": "2026-03-11T13:47:30.308985"
+    "timestamp": "2026-03-11T15:36:36.802971"
   },
   {
     "round": 1,
-    "score": 74.3,
-    "fill_rate": 0.9966,
-    "stockouts": 30,
-    "excess_ratio": 1.0355,
-    "hypothesis": "Implement day-of-week demand patterns and adaptive reorder thresholds to better match actual demand fluctuations and reduce excess inventory.",
+    "score": -505.08,
+    "fill_rate": 0.8286,
+    "stockouts": 1171,
+    "excess_ratio": 0.2442,
+    "hypothesis": "I'm modifying the reorder point calculation to incorporate a momentum-based approach, where the reorder point is adjusted based on the trend of the demand over the last few days, and also adding a cooldown period after reordering to prevent over-ordering.",
     "improved": false,
-    "delta": -8.310000000000002,
-    "timestamp": "2026-03-11T13:52:39.647738"
+    "delta": -587.6899999999999,
+    "timestamp": "2026-03-11T15:36:49.668782"
   },
   {
     "round": 2,
-    "score": -3.93,
-    "fill_rate": 0.9803,
-    "stockouts": 186,
-    "excess_ratio": 0.8965,
-    "hypothesis": "Implement a dynamic reorder point that adapts to both short-term demand patterns and long-term trends, combined with a cooldown period to prevent over-ordering, while incorporating day-of-week patterns to better match actual demand fluctuations.",
+    "score": 82.61,
+    "hypothesis": "Implementing a momentum-based reorder point calculation and incorporating day-of-week patterns, as well as cooldown after reorder, can improve the score by reducing over-ordering and better adapting to changing demand patterns.",
     "improved": false,
-    "delta": -86.54,
-    "timestamp": "2026-03-11T14:02:17.160395"
+    "error": "month must be in 1..12",
+    "timestamp": "2026-03-11T15:37:03.436979"
   },
   {
     "round": 3,
-    "score": -1052.4,
-    "fill_rate": 0.678,
-    "stockouts": 2223,
-    "excess_ratio": 0.8702,
-    "hypothesis": "Implement a multi-strategy policy that combines momentum-based reordering with day-of-week demand patterns and adaptive thresholds to better match actual demand fluctuations while minimizing excess inventory.",
+    "score": -328.89,
+    "fill_rate": 0.8499,
+    "stockouts": 606,
+    "excess_ratio": 11.0889,
+    "hypothesis": "Implementing a hybrid approach that incorporates momentum-based reorder, inventory velocity, and per-product learning, while maintaining the existing optimal parameters, to improve the score by better adapting to changing demand patterns and reducing over-ordering.",
     "improved": false,
-    "delta": -1135.01,
-    "timestamp": "2026-03-11T14:12:20.455204"
+    "delta": -411.5,
+    "timestamp": "2026-03-11T15:37:17.721705"
+  },
+  {
+    "round": 4,
+    "score": -625.04,
+    "fill_rate": 0.7376,
+    "stockouts": 1032,
+    "excess_ratio": 18.2804,
+    "hypothesis": "Implementing a hybrid approach that incorporates momentum-based reorder, inventory velocity, day-of-week patterns, per-product learning, and adaptive thresholds to improve the score by better adapting to changing demand patterns and reducing over-ordering.",
+    "improved": false,
+    "delta": -707.65,
+    "timestamp": "2026-03-11T15:37:32.547010"
+  },
+  {
+    "round": 5,
+    "score": 28.48,
+    "fill_rate": 0.9932,
+    "stockouts": 57,
+    "excess_ratio": 4.2349,
+    "hypothesis": "Implementing a hybrid approach that incorporates momentum-based reorder, inventory velocity, day-of-week patterns, per-product learning, adaptive thresholds, and cooldown after reorder to improve the score by better adapting to changing demand patterns and reducing over-ordering.",
+    "improved": false,
+    "delta": -54.129999999999995,
+    "timestamp": "2026-03-11T15:37:47.580642"
+  },
+  {
+    "round": 6,
+    "score": -368.7,
+    "fill_rate": 0.8565,
+    "stockouts": 724,
+    "excess_ratio": 9.2356,
+    "hypothesis": "Implementing a hybrid approach that incorporates momentum-based reorder, inventory velocity, day-of-week patterns, per-product learning, adaptive thresholds, and cooldown after reorder, while also using a more sophisticated demand forecasting method such as exponential smoothing, to improve the score by better adapting to changing demand patterns and reducing over-ordering.",
+    "improved": false,
+    "delta": -451.31,
+    "timestamp": "2026-03-11T15:38:01.391872"
+  },
+  {
+    "round": 7,
+    "score": -260.54,
+    "fill_rate": 0.8822,
+    "stockouts": 531,
+    "excess_ratio": 8.3262,
+    "hypothesis": "Implementing a hybrid approach that incorporates momentum-based reorder, inventory velocity, and per-product learning, while maintaining the existing optimal parameters and adding adaptive thresholds and cooldown after reorder, can improve the score by better adapting to changing demand patterns and reducing over-ordering.",
+    "improved": false,
+    "delta": -343.15000000000003,
+    "timestamp": "2026-03-11T15:38:15.933514"
+  },
+  {
+    "round": 8,
+    "score": -272.49,
+    "fill_rate": 0.8856,
+    "stockouts": 550,
+    "excess_ratio": 8.6046,
+    "hypothesis": "Incorporating momentum-based reorder and per-product learning with adaptive thresholds to improve the score by better adapting to changing demand patterns and reducing over-ordering, while maintaining the existing optimal parameters.",
+    "improved": false,
+    "delta": -355.1,
+    "timestamp": "2026-03-11T15:38:30.286246"
   }
 ]
