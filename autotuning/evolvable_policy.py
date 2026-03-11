@@ -19,17 +19,17 @@ from typing import Dict, List, Tuple, Optional
 
 # Reorder point calculation
 REORDER_WINDOW = 14          # Days of history to consider
-SAFETY_FACTOR = 2.0          # Multiplier on std dev for safety stock
+SAFETY_FACTOR = 1.5          # Multiplier on std dev for safety stock
 LEAD_TIME = 3                # Expected days for delivery
 SERVICE_LEVEL_Z = 1.65       # Z-score for 95% service level
 
 # Order quantity calculation
 ORDER_HORIZON = 7            # Days of supply to order
-ORDER_BUFFER = 1.2           # Buffer multiplier on order quantity
+ORDER_BUFFER = 1.0           # Buffer multiplier
 
 # Emergency detection
-EMERGENCY_THRESHOLD = 0.3    # Trigger emergency when inv < threshold * avg_daily
-EMERGENCY_MULTIPLIER = 2.0   # Order this much more in emergency
+EMERGENCY_THRESHOLD = 0.4    # Trigger emergency when inv < threshold * avg_daily
+EMERGENCY_MULTIPLIER = 1.8   # Order this much more in emergency
 
 # Demand forecasting
 USE_WEIGHTED_AVG = True      # Use exponential weighted average
@@ -39,7 +39,7 @@ TREND_WINDOW = 7             # Window for trend detection
 TREND_ADJUSTMENT = 0.1       # How much to adjust for trend (fraction)
 
 # Disruption response
-DISRUPTION_BUFFER = 1.5      # Extra buffer when any supplier is disrupted
+DISRUPTION_BUFFER = 1.3      # Extra buffer when any supplier is disrupted (was 1.5)
 PRE_DISRUPTION_DAYS = 2      # Start buffering this many days before typical disruption
 
 # ============================================================

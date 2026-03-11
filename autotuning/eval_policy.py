@@ -50,13 +50,17 @@ def evaluate(days=90, data_path="data/walmart_m5/", verbose=True):
     stockouts = m.stockout_events
     reorders = m.reorder_decisions
 
-    # Calculate excess inventory ratio
-    total_inv = sum(
-        sum(inv.values())
-        for inv in engine.history[-1].inventories.values()
-    ) if engine.history else 0
+    # Calculate excess inventory ratio (stores + warehouses only, not suppliers)
+    from simulation.network import NodeType
+    total_inv = 0
+    if engine.history:
+        for node_id, inv in engine.history[-1].inventories.items():
+            node = engine.network.get_node(node_id)
+            if node and node.node_type != NodeType.SUPPLIER:
+                total_inv += sum(inv.values())
     avg_daily = m.total_real_demand / max(1, m.days_simulated)
-    excess_ratio = max(0, (total_inv - avg_daily * 7) / max(1, avg_daily * 7))
+    ideal_inv = avg_daily * 7  # 7-day supply is "ideal"
+    excess_ratio = max(0, (total_inv - ideal_inv) / max(1, ideal_inv))
 
     # Score function from strategy.md
     score = fill_rate * 100 - stockouts * 0.5 - excess_ratio * 10

@@ -1,9 +1,9 @@
 {
-  "score": -53.1142,
-  "fill_rate": 0.999963,
-  "stockouts": 1,
-  "reorders": 809,
+  "score": 71.3228,
+  "fill_rate": 0.9958,
+  "stockouts": 47,
+  "reorders": 910,
   "total_demand": 2264982,
-  "fulfilled": 2264898,
-  "excess_ratio": 15.261
+  "fulfilled": 2255470,
+  "excess_ratio": 0.4757
 }

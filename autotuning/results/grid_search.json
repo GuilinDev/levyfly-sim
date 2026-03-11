@@ -1,0 +1,160 @@
+{
+  "best": {
+    "score": 89.408,
+    "fill_rate": 0.999494,
+    "stockouts": 8,
+    "reorders": 816,
+    "excess_ratio": 0.6541,
+    "params": {
+      "safety_factor": 1.2,
+      "order_horizon": 10,
+      "order_buffer": 0.9,
+      "emergency_thresh": 0.5,
+      "emergency_mult": 1.5
+    }
+  },
+  "top10": [
+    {
+      "score": 89.408,
+      "fill_rate": 0.999494,
+      "stockouts": 8,
+      "reorders": 816,
+      "excess_ratio": 0.6541,
+      "params": {
+        "safety_factor": 1.2,
+        "order_horizon": 10,
+        "order_buffer": 0.9,
+        "emergency_thresh": 0.5,
+        "emergency_mult": 1.5
+      }
+    },
+    {
+      "score": 89.2932,
+      "fill_rate": 0.999494,
+      "stockouts": 8,
+      "reorders": 820,
+      "excess_ratio": 0.6656,
+      "params": {
+        "safety_factor": 1.2,
+        "order_horizon": 10,
+        "order_buffer": 0.9,
+        "emergency_thresh": 0.3,
+        "emergency_mult": 1.5
+      }
+    },
+    {
+      "score": 88.1674,
+      "fill_rate": 0.995543,
+      "stockouts": 15,
+      "reorders": 1071,
+      "excess_ratio": 0.3887,
+      "params": {
+        "safety_factor": 1.8,
+        "order_horizon": 7,
+        "order_buffer": 0.9,
+        "emergency_thresh": 0.5,
+        "emergency_mult": 2.0
+      }
+    },
+    {
+      "score": 88.0495,
+      "fill_rate": 0.999187,
+      "stockouts": 9,
+      "reorders": 718,
+      "excess_ratio": 0.7369,
+      "params": {
+        "safety_factor": 1.5,
+        "order_horizon": 10,
+        "order_buffer": 1.1,
+        "emergency_thresh": 0.3,
+        "emergency_mult": 1.5
+      }
+    },
+    {
+      "score": 88.0388,
+      "fill_rate": 0.999187,
+      "stockouts": 9,
+      "reorders": 718,
+      "excess_ratio": 0.738,
+      "params": {
+        "safety_factor": 1.5,
+        "order_horizon": 10,
+        "order_buffer": 1.1,
+        "emergency_thresh": 0.5,
+        "emergency_mult": 1.5
+      }
+    },
+    {
+      "score": 87.6408,
+      "fill_rate": 0.999516,
+      "stockouts": 4,
+      "reorders": 851,
+      "excess_ratio": 1.0311,
+      "params": {
+        "safety_factor": 1.8,
+        "order_horizon": 10,
+        "order_buffer": 0.8,
+        "emergency_thresh": 0.3,
+        "emergency_mult": 2.0
+      }
+    },
+    {
+      "score": 87.5644,
+      "fill_rate": 0.995543,
+      "stockouts": 15,
+      "reorders": 1076,
+      "excess_ratio": 0.449,
+      "params": {
+        "safety_factor": 1.8,
+        "order_horizon": 7,
+        "order_buffer": 0.9,
+        "emergency_thresh": 0.3,
+        "emergency_mult": 2.0
+      }
+    },
+    {
+      "score": 87.4918,
+      "fill_rate": 0.998291,
+      "stockouts": 14,
+      "reorders": 907,
+      "excess_ratio": 0.5337,
+      "params": {
+        "safety_factor": 1.5,
+        "order_horizon": 10,
+        "order_buffer": 0.8,
+        "emergency_thresh": 0.3,
+        "emergency_mult": 1.5
+      }
+    },
+    {
+      "score": 87.0997,
+      "fill_rate": 0.999138,
+      "stockouts": 13,
+      "reorders": 902,
+      "excess_ratio": 0.6314,
+      "params": {
+        "safety_factor": 1.5,
+        "order_horizon": 10,
+        "order_buffer": 0.8,
+        "emergency_thresh": 0.5,
+        "emergency_mult": 1.5
+      }
+    },
+    {
+      "score": 86.8798,
+      "fill_rate": 0.999794,
+      "stockouts": 3,
+      "reorders": 696,
+      "excess_ratio": 1.16,
+      "params": {
+        "safety_factor": 1.8,
+        "order_horizon": 10,
+        "order_buffer": 1.0,
+        "emergency_thresh": 0.5,
+        "emergency_mult": 2.0
+      }
+    }
+  ],
+  "total": 240,
+  "elapsed_s": 25.08942413330078
+}
