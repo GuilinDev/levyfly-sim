@@ -128,14 +128,10 @@ class EvolvablePolicy:
         # Normal reorder check
         reorder_point = self._calculate_reorder_point(product)
         if current_inventory < reorder_point:
-            avg, _ = self._get_demand_estimate(product)
             qty = self._calculate_order_qty(product, current_inventory)
-            # EVOLVED: Subtract pending in-transit orders to avoid double-ordering
-            pending = ctx.get("pending_orders", 0)
-            qty = max(qty - pending, int(avg * 3))  # At least 3 days supply
             return True, qty, (
                 f"Below reorder point: inv={current_inventory} < s={reorder_point}, "
-                f"ordering {qty} (pending={pending})"
+                f"ordering {qty}"
             )
 
         return False, 0, ""
