@@ -232,7 +232,7 @@ Each domain has different agents, products, disruption scenarios, and risk profi
 - [x] AutoTuning — AI-discovered policies ✅
 - [x] Time series foundation model (Chronos-2 fine-tuned on M5) ✅
 - [x] Disruption stress testing (5 scenarios × 5 policies) ✅
-- [ ] Distribution validation (KS-test: sim vs real demand distributions)
+- [x] Distribution validation (KS-test + determinism check) ✅
 - [ ] LLM-powered agent reasoning (natural language decision explanations)
 - [ ] Monte Carlo counterfactual analysis ("200 sims: 70% stockout if delayed 2 days")
 - [ ] Agent explainability (What → Why → What-if audit trail)
