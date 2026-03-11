@@ -21,12 +21,13 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from simulation.network import SupplyChainNetwork, NodeType
+from simulation.network import SupplyChainNetwork
 from validation.walmart.m5_adapter import load_m5_data, build_network_from_m5, M5Dataset
 from validation.walmart.policy_engine import PolicyDrivenEngine
 from validation.walmart.policies import (
     NaivePolicy, SQPolicy, SSPolicy, AdaptiveSQPolicy, AIPolicy
 )
+from validation.walmart.scoring import evaluate_engine
 
 # Import Evolved Policy with best grid-search params
 try:
@@ -119,31 +120,12 @@ def run_scenario(dataset: M5Dataset, scenario_name: str, days: int) -> list:
         network = build_network_from_m5(modified_ds)
         engine = PolicyDrivenEngine(network, modified_ds, policy)
         engine.run(days=days, quiet=True)
-        m = engine.metrics
 
-        # Compute excess inventory ratio (exclude suppliers)
-        total_excess = 0
-        for node in network.nodes.values():
-            if node.node_type != NodeType.SUPPLIER:
-                total_excess += sum(node.inventory.values())
-        excess_ratio = total_excess / max(1, m.total_real_demand)
-
-        fill_rate = m.fill_rate
-        stockouts = m.stockout_events
-        score = fill_rate * 100 - stockouts * 0.5 - excess_ratio * 10
-
-        results.append({
-            "scenario": scenario_name,
-            "policy": label,
-            "score": round(score, 2),
-            "fill_rate": round(fill_rate, 4),
-            "stockouts": stockouts,
-            "stockout_units": m.stockout_units,
-            "excess_ratio": round(excess_ratio, 4),
-            "reorders": m.reorder_decisions,
-            "total_demand": m.total_real_demand,
-            "fulfilled": m.fulfilled_demand,
-        })
+        # Use unified scoring
+        result = evaluate_engine(engine, days_simulated=days)
+        result["scenario"] = scenario_name
+        result["policy"] = label
+        results.append(result)
 
     return results
 

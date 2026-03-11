@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from validation.walmart.m5_adapter import load_m5_data, build_network_from_m5
 from validation.walmart.policy_engine import PolicyDrivenEngine
-from simulation.network import NodeType
+from validation.walmart.scoring import evaluate_engine
 
 # Load data ONCE
 print("Loading M5 data...")
@@ -62,34 +62,16 @@ def evaluate_params(safety_factor, order_horizon, order_buffer, emergency_thresh
     engine = PolicyDrivenEngine(network, dataset, TestPolicy())
     engine.run(days=90, quiet=True)
 
-    m = engine.metrics
-    # Store+warehouse inventory only
-    total_inv = 0
-    if engine.history:
-        for nid, inv in engine.history[-1].inventories.items():
-            node = engine.network.get_node(nid)
-            if node and node.node_type != NodeType.SUPPLIER:
-                total_inv += sum(inv.values())
-
-    avg_daily = m.total_real_demand / max(1, m.days_simulated)
-    ideal_inv = avg_daily * 7
-    excess_ratio = max(0, (total_inv - ideal_inv) / max(1, ideal_inv))
-
-    score = m.fill_rate * 100 - m.stockout_events * 0.5 - excess_ratio * 10
-    return {
-        "score": round(score, 4),
-        "fill_rate": round(m.fill_rate, 6),
-        "stockouts": m.stockout_events,
-        "reorders": m.reorder_decisions,
-        "excess_ratio": round(excess_ratio, 4),
-        "params": {
-            "safety_factor": safety_factor,
-            "order_horizon": order_horizon,
-            "order_buffer": order_buffer,
-            "emergency_thresh": emergency_thresh,
-            "emergency_mult": emergency_mult,
-        }
+    # Use unified scoring
+    result = evaluate_engine(engine, days_simulated=90)
+    result["params"] = {
+        "safety_factor": safety_factor,
+        "order_horizon": order_horizon,
+        "order_buffer": order_buffer,
+        "emergency_thresh": emergency_thresh,
+        "emergency_mult": emergency_mult,
     }
+    return result
 
 # Parameter grid
 grid = {

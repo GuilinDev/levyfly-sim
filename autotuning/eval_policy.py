@@ -45,45 +45,19 @@ def evaluate(days=90, data_path="data/walmart_m5/", verbose=True):
     engine = PolicyDrivenEngine(network, dataset, policy)
     engine.run(days=days, quiet=True)
 
-    m = engine.metrics
-    fill_rate = m.fill_rate
-    stockouts = m.stockout_events
-    reorders = m.reorder_decisions
-
-    # Calculate excess inventory ratio (stores + warehouses only, not suppliers)
-    from simulation.network import NodeType
-    total_inv = 0
-    if engine.history:
-        for node_id, inv in engine.history[-1].inventories.items():
-            node = engine.network.get_node(node_id)
-            if node and node.node_type != NodeType.SUPPLIER:
-                total_inv += sum(inv.values())
-    avg_daily = m.total_real_demand / max(1, m.days_simulated)
-    ideal_inv = avg_daily * 7  # 7-day supply is "ideal"
-    excess_ratio = max(0, (total_inv - ideal_inv) / max(1, ideal_inv))
-
-    # Score function from strategy.md
-    score = fill_rate * 100 - stockouts * 0.5 - excess_ratio * 10
-
-    result = {
-        "score": round(score, 4),
-        "fill_rate": round(fill_rate, 6),
-        "stockouts": stockouts,
-        "reorders": reorders,
-        "total_demand": m.total_real_demand,
-        "fulfilled": m.fulfilled_demand,
-        "excess_ratio": round(excess_ratio, 4),
-    }
+    # Use unified scoring module
+    from validation.walmart.scoring import evaluate_engine
+    result = evaluate_engine(engine, days_simulated=days)
 
     if verbose:
         print(f"{'=' * 60}")
         print(f"📊 EVALUATION RESULT")
         print(f"{'=' * 60}")
-        print(f"  Score:       {score:.4f}")
-        print(f"  Fill Rate:   {fill_rate:.4%}")
-        print(f"  Stockouts:   {stockouts}")
-        print(f"  Reorders:    {reorders}")
-        print(f"  Excess:      {excess_ratio:.2%}")
+        print(f"  Score:       {result['score']:.2f}")
+        print(f"  Fill Rate:   {result['fill_rate']:.4%}")
+        print(f"  Stockouts:   {result['stockouts']}")
+        print(f"  Reorders:    {result['reorders']}")
+        print(f"  Excess:      {result['excess_ratio']:.2%}")
         print(f"{'=' * 60}")
 
     return result
