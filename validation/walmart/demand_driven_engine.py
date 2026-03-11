@@ -76,10 +76,38 @@ class DemandDrivenEngine:
         # Disrupted suppliers
         self.disrupted_nodes = set()
 
-        # Reorder parameters per warehouse
-        self.reorder_point = 200
-        self.reorder_qty = 600
-        self.emergency_threshold = 50
+        # Auto-size reorder parameters per product based on actual demand
+        from collections import defaultdict
+        product_store_daily = defaultdict(lambda: defaultdict(int))
+        product_daily = defaultdict(int)
+        n_days = len(dataset.daily_demands)
+
+        for day, demands in dataset.daily_demands.items():
+            for d in demands:
+                product_store_daily[d.product][d.store_id] += d.quantity
+                product_daily[d.product] += d.quantity
+
+        n_warehouses = len(network.get_warehouses())
+        n_stores = len(network.get_stores())
+
+        # Per-product reorder params for warehouses
+        self.wh_reorder_point = {}
+        self.wh_reorder_qty = {}
+        self.wh_emergency = {}
+        for p, total in product_daily.items():
+            daily = total / max(1, n_days)
+            per_wh = daily / max(1, n_warehouses)
+            self.wh_reorder_point[p] = int(per_wh * 3)
+            self.wh_reorder_qty[p] = int(per_wh * 7)
+            self.wh_emergency[p] = int(per_wh * 1)
+
+        # Per-product reorder params for stores
+        self.store_reorder_point = {}
+        self.store_reorder_qty = {}
+        for p, store_totals in product_store_daily.items():
+            max_store_daily = max(total / max(1, n_days) for total in store_totals.values())
+            self.store_reorder_point[p] = int(max_store_daily * 2)
+            self.store_reorder_qty[p] = int(max_store_daily * 5)
 
     def run(self, days: Optional[int] = None) -> List[DaySnapshot]:
         """Run simulation with real demand data."""
@@ -103,6 +131,13 @@ class DemandDrivenEngine:
         """Simulate one day with real demand."""
         day_events = []
         day_decisions = []
+
+        # 0. Supplier daily production (replenish inventory)
+        for supplier in self.network.get_suppliers():
+            for product in list(supplier.inventory.keys()):
+                # Produce daily — proportional to demand
+                daily_prod = self.wh_reorder_qty.get(product, 600) * 2
+                supplier.inventory[product] = supplier.inventory.get(product, 0) + daily_prod
 
         # 1. Process arriving shipments
         arriving = [s for s in self.in_transit if s[0] == day]
@@ -173,19 +208,20 @@ class DemandDrivenEngine:
                     severity="warning"
                 ))
 
-        # 4. Warehouse agent decisions
+        # 4. Warehouse agent decisions (per-product adaptive)
         for wh in self.network.get_warehouses():
             for product in self.dataset.products:
                 inv = wh.inventory.get(product, 0)
+                emergency_thresh = self.wh_emergency.get(product, 50)
+                reorder_pt = self.wh_reorder_point.get(product, 200)
+                reorder_qty = self.wh_reorder_qty.get(product, 600)
 
-                if inv < self.emergency_threshold:
-                    # Emergency reorder
+                if inv < emergency_thresh:
                     best_supplier = self._find_supplier(wh.id, product)
                     if best_supplier and best_supplier not in self.disrupted_nodes:
-                        order_qty = self.reorder_qty * 2
                         supplier = self.network.get_node(best_supplier)
                         available = supplier.inventory.get(product, 0) if supplier else 0
-                        actual_qty = min(order_qty, available)
+                        actual_qty = min(reorder_qty * 2, available)
                         if actual_qty > 0 and supplier:
                             supplier.inventory[product] = available - actual_qty
                             edge = self._find_edge(best_supplier, wh.id)
@@ -197,13 +233,12 @@ class DemandDrivenEngine:
                                 reasoning=f"Critical low: {inv} {product}, emergency order {actual_qty}",
                                 details={"product": product, "quantity": actual_qty}
                             ))
-                elif inv < self.reorder_point:
-                    # Normal reorder
+                elif inv < reorder_pt:
                     best_supplier = self._find_supplier(wh.id, product)
                     if best_supplier and best_supplier not in self.disrupted_nodes:
                         supplier = self.network.get_node(best_supplier)
                         available = supplier.inventory.get(product, 0) if supplier else 0
-                        actual_qty = min(self.reorder_qty, available)
+                        actual_qty = min(reorder_qty, available)
                         if actual_qty > 0 and supplier:
                             supplier.inventory[product] = available - actual_qty
                             edge = self._find_edge(best_supplier, wh.id)
@@ -220,14 +255,15 @@ class DemandDrivenEngine:
         for store in self.network.get_stores():
             for product in self.dataset.products:
                 inv = store.inventory.get(product, 0)
-                if inv < 30:
-                    # Find nearest warehouse
+                store_rp = self.store_reorder_point.get(product, 30)
+                store_rq = self.store_reorder_qty.get(product, 100)
+                if inv < store_rp:
                     best_wh = self._find_warehouse(store.id)
                     if best_wh:
                         wh = self.network.get_node(best_wh)
                         if wh:
                             wh_inv = wh.inventory.get(product, 0)
-                            transfer = min(100, wh_inv)
+                            transfer = min(store_rq, wh_inv)
                             if transfer > 0:
                                 wh.inventory[product] = wh_inv - transfer
                                 edge = self._find_edge(best_wh, store.id)

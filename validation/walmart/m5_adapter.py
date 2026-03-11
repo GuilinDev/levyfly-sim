@@ -72,7 +72,10 @@ def load_m5_data(data_dir: str, max_days: int = 365) -> M5Dataset:
                     events[day_num] = event
 
     # ── Load sales ──
-    sales_path = os.path.join(data_dir, "sales_train.csv")
+    # Support both M5 naming conventions
+    sales_path = os.path.join(data_dir, "sales_train_validation.csv")
+    if not os.path.exists(sales_path):
+        sales_path = os.path.join(data_dir, "sales_train.csv")
     daily_demands = defaultdict(list)
     stores_set = set()
     products_set = set()
@@ -206,35 +209,61 @@ def build_network_from_m5(dataset: M5Dataset) -> SupplyChainNetwork:
     state_regions = {"CA": "West", "TX": "South", "WI": "Midwest"}
 
     # Add suppliers (one per product category)
+    # Calculate per-product demand for supplier sizing
+    from collections import defaultdict as _dd
+    _product_demand = _dd(int)
+    _demand_days = 0
+    for day, demands in dataset.daily_demands.items():
+        _demand_days += 1
+        for d in demands:
+            _product_demand[d.product] += d.quantity
+    _avg_per_product = {p: max(100, q // max(1, _demand_days)) for p, q in _product_demand.items()}
+
+    # Suppliers with 30-day production capacity
     supplier_map = {
         "FOODS": ("S_FOODS", "Food Supplier Co.", (50, 150)),
+        "HOBBIES": ("S_HOBBIES", "Hobbies Supplier", (50, 250)),
         "HOUSEHOLD": ("S_HOUSE", "Household Goods Inc.", (50, 350)),
     }
 
     for cat, (sid, name, pos) in supplier_map.items():
+        cat_products = [p for p in dataset.products if p.startswith(cat)]
+        inv = {p: _avg_per_product.get(p, 100) * 30 for p in cat_products}
         node = Node(
             id=sid, name=name,
             node_type=NodeType.SUPPLIER,
             position=pos,
-            capacity=50000,
-            inventory={p: 10000 for p in dataset.products if p.startswith(cat)},
+            capacity=1000000,
+            inventory=inv,
         )
         net.add_node(node)
 
-    # Add regional warehouses
+    # Add regional warehouses — sized to real demand
+    # Average daily demand ~25K across all stores, so warehouses need ~5-7 days buffer
     warehouses = {
         "W_WEST": ("West Coast DC", (300, 100), ["CA"]),
         "W_SOUTH": ("South DC", (300, 250), ["TX"]),
         "W_MIDWEST": ("Midwest DC", (300, 400), ["WI"]),
     }
 
+    # Calculate per-product average daily demand for sizing
+    from collections import defaultdict
+    product_demand = defaultdict(int)
+    demand_days = 0
+    for day, demands in dataset.daily_demands.items():
+        demand_days += 1
+        for d in demands:
+            product_demand[d.product] += d.quantity
+    avg_per_product = {p: max(100, q // max(1, demand_days)) for p, q in product_demand.items()}
+
     for wid, (name, pos, states) in warehouses.items():
-        inv = {p: 500 for p in dataset.products}
+        # 7-day buffer per product
+        inv = {p: avg * 7 for p, avg in avg_per_product.items()}
         node = Node(
             id=wid, name=name,
             node_type=NodeType.WAREHOUSE,
             position=pos,
-            capacity=20000,
+            capacity=500000,
             inventory=inv,
         )
         net.add_node(node)
@@ -249,7 +278,8 @@ def build_network_from_m5(dataset: M5Dataset) -> SupplyChainNetwork:
     for store_id in dataset.stores:
         pos = store_positions.get(store_id, (600, 300))
         state = store_id.split("_")[0]
-        inv = {p: 100 for p in dataset.products}
+        # 3-day buffer per product for stores
+        inv = {p: avg * 3 for p, avg in avg_per_product.items()}
         node = Node(
             id=store_id, name=f"Walmart {store_id}",
             node_type=NodeType.STORE,
