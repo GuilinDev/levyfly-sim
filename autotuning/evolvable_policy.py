@@ -19,7 +19,7 @@ from typing import Dict, List, Tuple, Optional
 
 # Reorder point calculation
 REORDER_WINDOW = 14          # Days of history to consider
-SAFETY_FACTOR = 1.2          # Multiplier on std dev for safety stock (grid search optimal: 1.2)
+SAFETY_FACTOR = 1.1          # Multiplier on std dev for safety stock (grid search optimal: 1.2) # EVOLVED
 LEAD_TIME = 3                # Expected days for delivery
 SERVICE_LEVEL_Z = 1.65       # Z-score for 95% service level
 
