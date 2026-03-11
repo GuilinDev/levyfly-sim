@@ -19,17 +19,17 @@ from typing import Dict, List, Tuple, Optional
 
 # Reorder point calculation
 REORDER_WINDOW = 14          # Days of history to consider
-SAFETY_FACTOR = 1.5          # Multiplier on std dev for safety stock
+SAFETY_FACTOR = 1.2          # Multiplier on std dev for safety stock (grid search optimal: 1.2)
 LEAD_TIME = 3                # Expected days for delivery
 SERVICE_LEVEL_Z = 1.65       # Z-score for 95% service level
 
 # Order quantity calculation
-ORDER_HORIZON = 7            # Days of supply to order
-ORDER_BUFFER = 1.0           # Buffer multiplier
+ORDER_HORIZON = 10           # Days of supply to order (grid search optimal: 10)
+ORDER_BUFFER = 0.9           # Buffer multiplier (grid search optimal: 0.9)
 
 # Emergency detection
-EMERGENCY_THRESHOLD = 0.4    # Trigger emergency when inv < threshold * avg_daily
-EMERGENCY_MULTIPLIER = 1.8   # Order this much more in emergency
+EMERGENCY_THRESHOLD = 0.5    # Trigger emergency when inv < threshold * avg_daily (grid search: 0.5)
+EMERGENCY_MULTIPLIER = 1.5   # Order this much more in emergency (grid search: 1.5)
 
 # Demand forecasting
 USE_WEIGHTED_AVG = True      # Use exponential weighted average
