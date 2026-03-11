@@ -225,6 +225,48 @@ def build_evolution_prompt(strategy: str, current_code: str,
     best_entry = [h for h in history if h.get('improved')]
     if best_entry:
         best_score = max(h['score'] for h in best_entry)
+        best_h = max((h for h in history if h.get('improved')), key=lambda x: x['score'])
+        best_fill = best_h.get('fill_rate', 0.998)
+        best_so = best_h.get('stockouts', 20)
+        best_ex = best_h.get('excess_ratio', 0.72)
+    else:
+        best_fill, best_so, best_ex = 0.998, 20, 0.72
+
+    # Build banned list from repeated failures
+    failed_hypotheses = {}
+    for h in history:
+        if not h.get('improved') and 'error' not in h:
+            hyp = h.get('hypothesis', '')[:60]
+            if hyp and hyp != 'unknown':
+                failed_hypotheses[hyp] = failed_hypotheses.get(hyp, 0) + 1
+    
+    banned_str = ""
+    if failed_hypotheses:
+        banned_str = "\n## ⛔ BANNED MODIFICATIONS (already tried and failed — DO NOT repeat)\n"
+        for hyp, count in sorted(failed_hypotheses.items(), key=lambda x: -x[1]):
+            banned_str += f"- ❌ TRIED {count}x: {hyp}\n"
+        banned_str += "\nYou MUST try something DIFFERENT from the above list.\n"
+
+    # Idea pool — rotate based on round number
+    ideas = [
+        "Add a reorder cooldown: track last_reorder_day per (node,product), skip if ordered within last 2 days",
+        "Cap max order quantity: order_qty = min(order_qty, avg_demand * 5) to prevent huge single orders",
+        "Inventory velocity check: if inventory is INCREASING over last 3 days, skip reorder (demand dropping)",
+        "Reduce emergency_multiplier from 1.5 to 1.2 (emergency orders are too aggressive)",
+        "Add a pending-order check: if orders are already in transit, reduce new order quantity",
+        "Day-of-week bias: order 15% less on Friday (weekend demand lower for most retail)",
+        "Demand trend detection: if 3-day moving average < 7-day average, reduce order by 20%",
+        "Shrink reorder window: only reorder when inventory < reorder_point * 0.9 (tighter trigger)",
+        "Order rounding: round order_qty down to nearest 5 (fewer small top-up orders)",
+        "Exponential smoothing: weight recent demand more heavily (alpha=0.3) for reorder calculation",
+        "Reduce ORDER_HORIZON from 10 to 8 AND increase SAFETY_FACTOR to 1.15 (less lookahead, slightly more buffer)",
+        "Add inventory ceiling: if current_inventory > avg_demand * 15, never reorder regardless",
+        "Conditional safety factor: SF=1.0 for high-volume products (>50/day), SF=1.2 for low-volume",
+        "Batch consolidation: accumulate small orders for 2 days before placing (reduce over-ordering frequency)",
+    ]
+    # Pick 3 ideas for this round, avoiding already-tried ones
+    start = (round_num * 3) % len(ideas)
+    round_ideas = [ideas[(start + i) % len(ideas)] for i in range(3)]
 
     return f"""You are an AI researcher evolving a supply chain inventory policy.
 Your goal: make a SMALL, TARGETED change to improve the score.
@@ -232,14 +274,13 @@ Your goal: make a SMALL, TARGETED change to improve the score.
 ## Scoring Function
 score = fill_rate × 100 - stockouts × 0.5 - excess_ratio × 10
 
-Current best score: {best_score}
-- fill_rate is already ~99.8% (near perfect — DON'T break this)
-- stockouts = 20 (small improvements possible)
-- excess_ratio = 72% (this is where most points are lost: 72% × 10 = -7.2 points)
+Current best: score={best_score:.2f}, fill={best_fill:.1%}, stockouts={best_so}, excess={best_ex:.0%}
+- fill_rate is near perfect — PROTECT IT (don't let it drop below 99.5%)
+- stockouts={best_so} — moderate, can improve
+- excess={best_ex:.0%} — THIS is the main penalty ({best_ex*10:.1f} points lost)
 
-⚠️ CRITICAL: The #1 way to improve is REDUCING EXCESS INVENTORY without increasing stockouts.
-⚠️ DO NOT add complexity that breaks the fill rate. Most previous attempts crashed fill_rate.
-
+⚠️ CRITICAL: Reduce excess WITHOUT crashing fill rate. Most failed attempts increased stockouts.
+{banned_str}
 ## Current Best Code
 ```python
 {current_code}
@@ -251,26 +292,23 @@ Current best score: {best_score}
 
 ## RULES (MUST FOLLOW)
 
-1. Make ONE small change only. Do NOT rewrite the entire algorithm.
-2. Keep all existing parameters and logic INTACT unless your change specifically modifies one thing.
-3. The should_reorder method signature MUST stay: (self, node_id, product, current_inventory, day) → (bool, int, str)
-4. The class MUST be named EvolvablePolicy
-5. Output the COMPLETE file (all imports, class, methods) — even unchanged parts.
+1. Make ONE small, targeted change. Keep everything else IDENTICAL.
+2. The should_reorder method signature: (self, node_id, product, current_inventory, day) → (bool, int, str)
+3. Class name: EvolvablePolicy
+4. Output the COMPLETE file — copy unchanged parts exactly.
+5. Mark your change with # EVOLVED comment.
 
-## Ideas (pick ONE, implement minimally)
-- Reduce order_batch to 0.85 (order slightly less each time → less excess)
-- Add reorder cooldown: skip reorder if last order was <3 days ago (prevent over-ordering)
-- Tighten safety_factor from 1.2 to 1.1 (less safety stock → less excess)
-- Cap max_order_qty per product (prevent huge single orders)
-- Reduce order quantity when recent demand is declining (inventory velocity)
-- Skip emergency reorder if pending orders will arrive within lead_time
+## Ideas for THIS round (pick ONE, implement minimally)
+- {round_ideas[0]}
+- {round_ideas[1]}
+- {round_ideas[2]}
 
 ## Output Format
 
-HYPOTHESIS: [one sentence: what you're changing and why it should reduce excess]
+HYPOTHESIS: [one sentence: what specific change and why]
 
 ```python
-[complete evolvable_policy.py — with your ONE change clearly marked with # EVOLVED comment]
+[complete evolvable_policy.py]
 ```
 """
 
