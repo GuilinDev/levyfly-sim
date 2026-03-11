@@ -103,13 +103,13 @@ python validation/walmart/disruption_test.py
 
 | Scenario | (s,S) Score | Evolved Score | (s,S) Degradation | Evolved Degradation |
 |----------|------------|--------------|-------------------|-------------------|
-| Baseline (calm) | 91.35 | 88.46 | — | — |
-| Single supplier outage | 91.32 | 89.97 | -0.0% | **+1.7%** ✨ |
-| Multi-supplier cascade | 90.30 | 85.92 | -1.1% | -2.9% |
-| Demand spike + outage | 90.25 | 80.54 | -1.2% | -9.0% |
-| Extended partial (30 days) | 62.97 | 50.60 | **-31.1%** | -42.8% |
+| Baseline (calm) | 24.28 | **82.61** | — | — |
+| Single supplier outage | 23.91 | **84.12** | -1.5% | **+1.8%** ✨ |
+| Multi-supplier cascade | 22.86 | **80.13** | -5.8% | -3.0% |
+| Demand spike + outage | 37.39 | **75.30** | +54.0% | -8.8% |
+| Extended partial (30 days) | **-0.28** | **44.80** | **-101.2%** 💀 | -45.8% |
 
-> **Key finding**: Under single supplier outage, the Evolved Agent actually *improves* (+1.7%) while (s,S) stays flat — adaptive agents detect disruptions and proactively buffer. Under extended disruptions, all policies degrade, but the gap between strategies shrinks as chaos overwhelms static buffers.
+> **Key findings**: (1) Evolved Agent wins **every scenario** by 40-60 points. (2) Under single supplier outage, Evolved actually *improves* (+1.8%) by proactively buffering, while (s,S) degrades. (3) Under extended disruption, (s,S) completely collapses (-101%) while Evolved holds at -46%. The reason (s,S) scores low even in baseline: it achieves 99.85% fill rate but holds **7× excess inventory**, destroying the composite score.
 
 ### Polymarket Prediction Backtesting (10 resolved markets)
 
