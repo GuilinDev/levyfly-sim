@@ -98,7 +98,8 @@ class EvolvablePolicy:
         avg, std = self._get_demand_estimate(product)
         target = avg * ORDER_HORIZON * ORDER_BUFFER
         qty = int(target - current_inv + self._calculate_reorder_point(product))
-        return max(qty, int(avg * 3))  # At least 3 days supply
+        # EVOLVED: Round down order quantity to nearest 5
+        return max(qty - (qty % 5), int(avg * 3))  # At least 3 days supply
 
     def _is_emergency(self, product: str, current_inv: int) -> bool:
         """Detect if we're in an emergency low-stock situation."""
