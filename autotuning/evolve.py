@@ -89,9 +89,30 @@ def call_llm(prompt: str, model: str = "openai/gpt-oss-120b",
             method="POST"
         )
 
-        with urllib.request.urlopen(req, timeout=120) as response:
-            data = json.loads(response.read().decode("utf-8"))
-            return data["choices"][0]["message"]["content"].strip()
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(req, timeout=120) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+                    return data["choices"][0]["message"]["content"].strip()
+            except urllib.error.HTTPError as e:
+                if e.code == 429:
+                    wait = 30 * (attempt + 1)
+                    print(f"    ⏳ Rate limited, waiting {wait}s...")
+                    time.sleep(wait)
+                    # Rebuild request (urllib consumes the body)
+                    req = urllib.request.Request(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        data=body,
+                        headers={
+                            "Content-Type": "application/json",
+                            "Authorization": f"Bearer {groq_key}",
+                            "User-Agent": "LevyFly-Evolution/1.0",
+                        },
+                        method="POST"
+                    )
+                else:
+                    raise
+        raise RuntimeError("Rate limited after 3 retries")
     
     else:  # ollama
         body = json.dumps({
@@ -174,61 +195,82 @@ def build_evolution_prompt(strategy: str, current_code: str,
                             history: list, round_num: int) -> str:
     """Build the prompt for the LLM to propose code changes."""
     
-    # Format history
+    # Format history with diagnostics
     history_str = ""
     if history:
-        history_str = "\n## Previous Attempts\n"
-        for h in history[-5:]:  # Last 5 attempts
+        history_str = "\n## Previous Attempts (LEARN FROM FAILURES)\n"
+        for h in history[-8:]:  # Last 8 attempts
             status = "✅ IMPROVED" if h.get("improved") else "❌ WORSE"
+            diag = ""
+            if not h.get("improved") and "error" not in h:
+                fr = h.get("fill_rate", 0)
+                so = h.get("stockouts", 0)
+                ex = h.get("excess_ratio", 0)
+                # Diagnose WHY it failed
+                if fr < 0.95:
+                    diag = f" [FAILED: fill_rate crashed to {fr:.1%}, too many stockouts={so}]"
+                elif ex > 1.0:
+                    diag = f" [FAILED: excess inventory {ex:.0%} way too high — score penalty ×10]"
+                elif so > 30:
+                    diag = f" [FAILED: stockouts={so} too many]"
+                else:
+                    diag = f" [FAILED: fill={fr:.1%}, stockouts={so}, excess={ex:.0%}]"
             history_str += (
                 f"- Round {h['round']}: {status} | "
                 f"Score: {h['score']:.2f} | "
-                f"Hypothesis: {h.get('hypothesis', 'N/A')}\n"
+                f"{h.get('hypothesis', 'N/A')}{diag}\n"
             )
     
+    best_score = history[-1]['score'] if history else 'unknown'
+    best_entry = [h for h in history if h.get('improved')]
+    if best_entry:
+        best_score = max(h['score'] for h in best_entry)
+
     return f"""You are an AI researcher evolving a supply chain inventory policy.
-Your goal: modify the Python code to achieve a HIGHER score.
+Your goal: make a SMALL, TARGETED change to improve the score.
 
-## Strategy (Human-Defined Objectives)
-{strategy}
+## Scoring Function
+score = fill_rate × 100 - stockouts × 0.5 - excess_ratio × 10
 
-## Current Best Code (score = {history[-1]['score'] if history else 'unknown'})
+Current best score: {best_score}
+- fill_rate is already ~99.8% (near perfect — DON'T break this)
+- stockouts = 20 (small improvements possible)
+- excess_ratio = 72% (this is where most points are lost: 72% × 10 = -7.2 points)
+
+⚠️ CRITICAL: The #1 way to improve is REDUCING EXCESS INVENTORY without increasing stockouts.
+⚠️ DO NOT add complexity that breaks the fill rate. Most previous attempts crashed fill_rate.
+
+## Current Best Code
 ```python
 {current_code}
 ```
+
+## Strategy Context
+{strategy}
 {history_str}
 
-## Your Task
+## RULES (MUST FOLLOW)
 
-1. ANALYZE the current code and identify what could be improved
-2. HYPOTHESIZE a specific change that could improve the score
-3. IMPLEMENT the change by rewriting the COMPLETE file
+1. Make ONE small change only. Do NOT rewrite the entire algorithm.
+2. Keep all existing parameters and logic INTACT unless your change specifically modifies one thing.
+3. The should_reorder method signature MUST stay: (self, node_id, product, current_inventory, day) → (bool, int, str)
+4. The class MUST be named EvolvablePolicy
+5. Output the COMPLETE file (all imports, class, methods) — even unchanged parts.
 
-Rules:
-- You MUST output the COMPLETE evolvable_policy.py file
-- Keep the same class name (EvolvablePolicy) and interface (should_reorder method)
-- You can change ANYTHING: parameters, logic, algorithms, add new methods
-- Think creatively: try ideas humans might not consider
-- The scoring function penalizes excess inventory heavily (×10)
-- Previous grid search found optimal params: SF=1.2, OH=10, OB=0.9
-- If params are already optimal, try STRUCTURAL changes to the algorithm
-
-Ideas to explore:
-- Momentum-based reorder (if demand rising 3 days straight, preemptively order)
-- Inventory velocity (rate of consumption, not just level)
-- Day-of-week patterns (weekends have different demand)
-- Per-product learning (different products need different strategies)
-- Cooldown after reorder (don't over-order by waiting for shipments)
-- Adaptive thresholds (tighten/loosen based on recent volatility)
+## Ideas (pick ONE, implement minimally)
+- Reduce order_batch to 0.85 (order slightly less each time → less excess)
+- Add reorder cooldown: skip reorder if last order was <3 days ago (prevent over-ordering)
+- Tighten safety_factor from 1.2 to 1.1 (less safety stock → less excess)
+- Cap max_order_qty per product (prevent huge single orders)
+- Reduce order quantity when recent demand is declining (inventory velocity)
+- Skip emergency reorder if pending orders will arrive within lead_time
 
 ## Output Format
 
-First, state your hypothesis in one line:
-HYPOTHESIS: [what you're changing and why]
+HYPOTHESIS: [one sentence: what you're changing and why it should reduce excess]
 
-Then output the complete code:
 ```python
-[complete evolvable_policy.py]
+[complete evolvable_policy.py — with your ONE change clearly marked with # EVOLVED comment]
 ```
 """
 
@@ -293,7 +335,7 @@ def run_evolution(rounds: int = 5, model: str = "mistral-small3.2:24b"):
         prompt = build_evolution_prompt(strategy, current_code, history, round_num)
         
         try:
-            response = call_llm(prompt, model=model, temperature=0.7 + round_num * 0.05)
+            response = call_llm(prompt, model=model, temperature=min(0.5 + round_num * 0.03, 0.8))
         except Exception as e:
             print(f"   ❌ LLM call failed: {e}")
             continue
@@ -416,6 +458,10 @@ def run_evolution(rounds: int = 5, model: str = "mistral-small3.2:24b"):
         # Save log after each round
         with open(EVOLUTION_LOG, "w") as f:
             json.dump(history, f, indent=2, default=str)
+        
+        # Small delay to avoid rate limits
+        if round_num < rounds:
+            time.sleep(3)
 
     # Summary
     print(f"\n{'=' * 70}")
