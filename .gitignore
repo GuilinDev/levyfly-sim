@@ -12,3 +12,8 @@ data/walmart_m5/calendar.csv
 data/walmart_m5/sell_prices.csv
 data/walmart_m5/*.csv
 !data/walmart_m5/generate_sample.py
+
+# Model files (too large for git)
+models/
+chronos-2-finetuned/
+training_log.txt
