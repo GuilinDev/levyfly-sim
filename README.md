@@ -120,6 +120,27 @@ python validation/walmart/disruption_test.py
 
 Agent outperforms market consensus on high-uncertainty events (zero-shot, no market data).
 
+### LLM-Powered Strategic Agent (Local Inference)
+
+Agents don't just follow rules — they **reason about decisions** in natural language.
+
+```bash
+python validation/walmart/run_llm_comparison.py --model mistral-small3.2:24b
+```
+
+| Policy | Score | Fill Rate | Stockouts | Excess | Decisions |
+|--------|-------|-----------|-----------|--------|-----------|
+| (s,S) Fixed | 41.67 | 99.6% | 3 | 564% | 0 |
+| Evolved Agent | **89.59** | 99.8% | 8 | 62% | 0 |
+| LLM Agent (Mistral) | 81.37 | 99.7% | **2** ✨ | 174% | 31 |
+
+> **LLM Agent achieves the fewest stockouts** (2 vs 8 for Evolved). Each strategic decision includes a natural language reasoning chain — auditable, explainable, enterprise-ready.
+
+**Example decision (Day 31, stockout risk):**
+> *"The current inventory of 53 units is critically low compared to the 1-day supply of 268 units, and the inventory trend is declining. Given the emergency mode and the high stockout risk, an immediate large reorder is necessary."* — Confidence: 95%
+
+Architecture: Evolved Policy handles routine reorders (fast, no API). LLM consulted only during anomalies (demand spikes, stockout risk, weekly reviews). ~3 calls/day via local Ollama — zero API cost.
+
 ### AutoTuning — AI-Discovered Policies
 
 *Inspired by [Karpathy's autoresearch](https://github.com/karpathy/autoresearch): human defines objectives, AI discovers strategies.*
@@ -233,7 +254,7 @@ Each domain has different agents, products, disruption scenarios, and risk profi
 - [x] Time series foundation model (Chronos-2 fine-tuned on M5) ✅
 - [x] Disruption stress testing (5 scenarios × 5 policies) ✅
 - [x] Distribution validation (KS-test + determinism check) ✅
-- [ ] LLM-powered agent reasoning (natural language decision explanations)
+- [x] LLM-powered agent reasoning (Mistral, 31 strategic decisions with reasoning chains) ✅
 - [ ] Monte Carlo counterfactual analysis ("200 sims: 70% stockout if delayed 2 days")
 - [ ] Agent explainability (What → Why → What-if audit trail)
 - [ ] Interactive web dashboard (React + WebSocket)
