@@ -215,7 +215,7 @@ Your CSV Data          Simulation Engine              AI Layer                Ou
 └──────────┘          │ • Reorder logic   │          │ (grid search)│       └──────────────┘
                       │ • Disruption      │          └──────────────┘
                       │   adaptation      │
-                      │ • Supplier switch  │
+                      │ • Supplier switch │
                       └───────────────────┘
 ```
 
