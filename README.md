@@ -146,16 +146,28 @@ Architecture: Evolved Policy handles routine reorders (fast, no API). LLM consul
 *Inspired by [Karpathy's autoresearch](https://github.com/karpathy/autoresearch): human defines objectives, AI discovers strategies.*
 
 ```bash
-python autotuning/grid_search.py  # 240 combos in 25 seconds
+python autotuning/grid_search.py   # 240 combos in 25 seconds
+python autotuning/evolve.py --rounds 20  # AI rewrites strategy code
 ```
 
-The autotuning framework automatically searches for optimal inventory policies:
-1. **Human** defines objectives in `strategy.md` — what matters, what to optimize
-2. **AI** evolves policy parameters in `evolvable_policy.py`
-3. **Engine** evaluates against real M5 demand data (single-score harness)
-4. **Best policy wins** — parameters committed to results/
+**Two levels of automated policy discovery:**
 
-The Evolved Policy (`SF=1.2, OH=10, OB=0.9, ET=0.5, EM=1.5`) was discovered entirely through automated search. No hand-tuning, no domain expertise required.
+| Level | What Changes | Search Space | Method |
+|-------|-------------|-------------|--------|
+| **Parameter Tuning** | Numbers (safety factor, order horizon, etc.) | 240 combos | Grid search |
+| **Code Evolution** 🧬 | Algorithm logic (new reorder rules, conditions) | Infinite | LLM + eval loop |
+
+Grid search found optimal parameters (`SF=1.2, OH=10, OB=0.9`). Then **Code Evolution went further** — an LLM reads the strategy objectives and current code, proposes algorithmic modifications, evaluates them against real M5 data, and commits improvements automatically.
+
+**Evolution results (30 rounds, Llama 3.3 70B via Groq):**
+
+| Stage | Score | What AI Discovered |
+|-------|-------|--------------------|
+| Grid search baseline | 82.61 | Optimal parameter combination |
+| **Evolution Round 1** | **82.86** | Reduced safety factor (less buffer → fewer stockouts) |
+| **Evolution Round 2** | **84.50** | Order rounding to nearest 5 (reduces micro-excess from frequent small top-ups) |
+
+> **The key insight**: Grid search explores a fixed algorithm with different numbers. Code Evolution explores *different algorithms* — the AI discovered "order rounding", a strategy not in the original search space. This is the difference between tuning a radio dial and inventing a new antenna.
 
 ## 📊 End-to-End Output
 
@@ -221,7 +233,7 @@ Your CSV Data          Simulation Engine              AI Layer                Ou
 |-------|-----------|--------|
 | **L1: Parameter Self-Adaptation** | Grid search discovers optimal reorder parameters | ✅ Done |
 | **L2: Online Learning** | Fine-tune forecasting models on daily data | ✅ Done (Chronos-2) |
-| **L3: Meta-Learning** | Agents discover entirely new strategy structures | 🔬 Research |
+| **L3: Code Evolution** | LLM rewrites strategy code, discovers new algorithms | ✅ Done (82.61→84.50) |
 
 ## 🔄 Cross-Domain Extensibility
 
@@ -255,6 +267,7 @@ Each domain has different agents, products, disruption scenarios, and risk profi
 - [x] Disruption stress testing (5 scenarios × 5 policies) ✅
 - [x] Distribution validation (KS-test + determinism check) ✅
 - [x] LLM-powered agent reasoning (Mistral, 31 strategic decisions with reasoning chains) ✅
+- [x] Code Evolution — LLM rewrites strategy code, discovers algorithms beyond parameter tuning (82.61→84.50) ✅
 - [ ] Monte Carlo counterfactual analysis ("200 sims: 70% stockout if delayed 2 days")
 - [ ] Agent explainability (What → Why → What-if audit trail)
 - [ ] Interactive web dashboard (React + WebSocket)
@@ -265,8 +278,9 @@ LevyFly builds on the insight that **domain-agnostic multi-agent simulation** va
 
 1. **Real-data validation** — No synthetic benchmarks. Walmart M5 (2.26M demand units) and Polymarket (10 resolved markets with ground truth).
 2. **AI-discovered policies** — Automated search finds strategies that outperform industry-standard (s,S) by 3.7× on composite score.
-3. **Foundation model integration** — Fine-tuned Chronos-2 reduces stockouts by 67% vs zero-shot baseline.
-4. **Domain agnostic** — Same engine, three industries, zero code changes.
+3. **Code Evolution** — LLM agents don't just tune parameters; they rewrite strategy code, discovering algorithms beyond the original search space.
+4. **Foundation model integration** — Fine-tuned Chronos-2 reduces stockouts by 67% vs zero-shot baseline.
+5. **Domain agnostic** — Same engine, three industries, zero code changes.
 
 ## 🤝 Team
 
