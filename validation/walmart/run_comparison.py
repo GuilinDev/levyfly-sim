@@ -82,14 +82,20 @@ def main():
 
     ]
 
-    # Try loading AI model
+    # Try loading AI models
     try:
         from validation.walmart.forecast_model import ChronosForecastModel
         chronos = ChronosForecastModel("tiny", device="cpu")
         policies.append((AIPolicy(forecast_model=chronos), f"AI Agent ({chronos.name})"))
     except Exception as e:
-        print(f"⚠️ Chronos not available: {e}")
-        policies.append((AIPolicy(forecast_model=None), "AI Agent (fallback)"))
+        print(f"⚠️ Chronos T5 not available: {e}")
+
+    try:
+        from validation.walmart.forecast_model import Chronos2ForecastModel
+        chronos2 = Chronos2ForecastModel("models/chronos-m5-finetuned", device="cpu")
+        policies.append((AIPolicy(forecast_model=chronos2), f"AI Agent ({chronos2.name})"))
+    except Exception as e:
+        print(f"⚠️ Chronos-2 not available: {e}")
 
 
     print("=" * 75)

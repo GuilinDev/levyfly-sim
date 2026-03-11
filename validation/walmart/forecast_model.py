@@ -13,20 +13,15 @@ from typing import List, Optional
 
 class ChronosForecastModel:
     """
-    Amazon Chronos — pre-trained time series foundation model.
-    No fine-tuning needed for initial demo; zero-shot forecasting.
+    Amazon Chronos T5 — pre-trained time series foundation model.
+    Zero-shot forecasting.
     """
 
     def __init__(self, model_size: str = "tiny", device: str = "cpu"):
-        """
-        Args:
-            model_size: tiny (8M), mini (20M), small (46M), base (200M), large (710M)
-            device: cpu or cuda
-        """
         from chronos import ChronosPipeline
 
         model_id = f"amazon/chronos-t5-{model_size}"
-        print(f"  📦 Loading Chronos ({model_size})...")
+        print(f"  📦 Loading Chronos T5 ({model_size})...")
         self.pipeline = ChronosPipeline.from_pretrained(
             model_id,
             device_map=device,
@@ -36,28 +31,44 @@ class ChronosForecastModel:
         print(f"  ✅ Chronos {model_size} loaded")
 
     def predict(self, history: List[float], horizon: int = 7) -> List[float]:
-        """
-        Predict future values given history.
-
-        Args:
-            history: Past demand values
-            horizon: How many steps to predict
-
-        Returns:
-            List of predicted values
-        """
         if len(history) < 3:
-            # Not enough history, return mean
             avg = sum(history) / max(1, len(history)) if history else 10
             return [avg] * horizon
 
         context = torch.tensor([history], dtype=torch.float32)
         forecast = self.pipeline.predict(context, prediction_length=horizon)
-        # forecast shape: (1, num_samples, horizon) — take median
         median_forecast = torch.median(forecast, dim=1).values[0].tolist()
-
-        # Clamp to non-negative
         return [max(0, v) for v in median_forecast]
+
+
+class Chronos2ForecastModel:
+    """
+    Chronos-2 — fine-tuned on domain data. Returns quantile forecasts.
+    """
+
+    def __init__(self, model_path: str = "models/chronos-m5-finetuned", device: str = "cpu"):
+        from chronos import Chronos2Pipeline
+
+        print(f"  📦 Loading Chronos-2 from {model_path}...")
+        self.pipeline = Chronos2Pipeline.from_pretrained(
+            model_path,
+            device_map=device,
+            dtype=torch.float32,
+        )
+        self.name = "chronos2-m5-finetuned"
+        print(f"  ✅ Chronos-2 loaded")
+
+    def predict(self, history: List[float], horizon: int = 7) -> List[float]:
+        if len(history) < 3:
+            avg = sum(history) / max(1, len(history)) if history else 10
+            return [avg] * horizon
+
+        context = torch.tensor([[history]], dtype=torch.float32)  # (1, 1, T)
+        forecast = self.pipeline.predict(context, prediction_length=horizon)
+        # forecast[0] shape: (1, n_quantiles, horizon)
+        quantiles = forecast[0][0]  # (n_quantiles, horizon)
+        median = quantiles[quantiles.shape[0] // 2].tolist()
+        return [max(0, v) for v in median]
 
 
 class NaiveForecastModel:
