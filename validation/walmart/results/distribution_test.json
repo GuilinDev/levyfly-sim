@@ -1,0 +1,76 @@
+{
+  "per_product": [
+    {
+      "product": "FOODS_1",
+      "ks_statistic": 0.1889,
+      "p_value": 0.0806,
+      "n_days": 90,
+      "mean_daily": 1792.2,
+      "std_daily": 413.6,
+      "is_normal": true
+    },
+    {
+      "product": "FOODS_2",
+      "ks_statistic": 0.0889,
+      "p_value": 0.9822,
+      "n_days": 90,
+      "mean_daily": 3342.9,
+      "std_daily": 665.0,
+      "is_normal": true
+    },
+    {
+      "product": "FOODS_3",
+      "ks_statistic": 0.1556,
+      "p_value": 0.2266,
+      "n_days": 90,
+      "mean_daily": 12591.0,
+      "std_daily": 2614.3,
+      "is_normal": true
+    },
+    {
+      "product": "HOBBIES_1",
+      "ks_statistic": 0.1556,
+      "p_value": 0.2266,
+      "n_days": 90,
+      "mean_daily": 2608.0,
+      "std_daily": 554.2,
+      "is_normal": true
+    },
+    {
+      "product": "HOBBIES_2",
+      "ks_statistic": 0.1222,
+      "p_value": 0.5214,
+      "n_days": 90,
+      "mean_daily": 171.0,
+      "std_daily": 34.8,
+      "is_normal": true
+    },
+    {
+      "product": "HOUSEHOLD_1",
+      "ks_statistic": 0.1889,
+      "p_value": 0.0806,
+      "n_days": 90,
+      "mean_daily": 3351.2,
+      "std_daily": 710.9,
+      "is_normal": true
+    },
+    {
+      "product": "HOUSEHOLD_2",
+      "ks_statistic": 0.2444,
+      "p_value": 0.0092,
+      "n_days": 90,
+      "mean_daily": 1310.1,
+      "std_daily": 268.1,
+      "is_normal": false
+    }
+  ],
+  "self_consistency": {
+    "deterministic": true,
+    "total_demand": 2264982
+  },
+  "summary": {
+    "products_tested": 7,
+    "non_normal_count": 1,
+    "total_demand_replayed": 2264982
+  }
+}
