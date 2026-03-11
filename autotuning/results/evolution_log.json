@@ -1,0 +1,45 @@
+[
+  {
+    "round": 0,
+    "score": 82.61,
+    "fill_rate": 0.9979,
+    "stockouts": 20,
+    "excess_ratio": 0.7187,
+    "hypothesis": "Grid search optimal (baseline)",
+    "improved": true,
+    "timestamp": "2026-03-11T13:47:30.308985"
+  },
+  {
+    "round": 1,
+    "score": 74.3,
+    "fill_rate": 0.9966,
+    "stockouts": 30,
+    "excess_ratio": 1.0355,
+    "hypothesis": "Implement day-of-week demand patterns and adaptive reorder thresholds to better match actual demand fluctuations and reduce excess inventory.",
+    "improved": false,
+    "delta": -8.310000000000002,
+    "timestamp": "2026-03-11T13:52:39.647738"
+  },
+  {
+    "round": 2,
+    "score": -3.93,
+    "fill_rate": 0.9803,
+    "stockouts": 186,
+    "excess_ratio": 0.8965,
+    "hypothesis": "Implement a dynamic reorder point that adapts to both short-term demand patterns and long-term trends, combined with a cooldown period to prevent over-ordering, while incorporating day-of-week patterns to better match actual demand fluctuations.",
+    "improved": false,
+    "delta": -86.54,
+    "timestamp": "2026-03-11T14:02:17.160395"
+  },
+  {
+    "round": 3,
+    "score": -1052.4,
+    "fill_rate": 0.678,
+    "stockouts": 2223,
+    "excess_ratio": 0.8702,
+    "hypothesis": "Implement a multi-strategy policy that combines momentum-based reordering with day-of-week demand patterns and adaptive thresholds to better match actual demand fluctuations while minimizing excess inventory.",
+    "improved": false,
+    "delta": -1135.01,
+    "timestamp": "2026-03-11T14:12:20.455204"
+  }
+]
