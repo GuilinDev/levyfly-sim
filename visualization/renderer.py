@@ -101,7 +101,8 @@ class SupplyChainRenderer:
         draw.line([(0, 60), (self.WIDTH, 60)], fill=PANEL_BORDER, width=2)
         draw.text((20, 12), "⚡ LevyFly", fill=(100, 180, 255), font=self.font_title)
         draw.text((165, 16), "Supply Chain Simulation", fill=MUTED_TEXT, font=self.font_md)
-        draw.text((20, 38), f"Day {snapshot.day:>3d}/30", fill=TEXT_COLOR, font=self.font_md)
+        total_days = getattr(self, 'total_days', snapshot.day)
+        draw.text((20, 38), f"Day {snapshot.day:>3d}/{total_days}", fill=TEXT_COLOR, font=self.font_md)
 
         # Disruption alert
         if snapshot.disruptions:
@@ -303,29 +304,35 @@ class SupplyChainRenderer:
         draw.text((x + 10, y), "📦 Inventory", fill=TEXT_COLOR, font=self.font_md)
         y += 22
 
-        for node_id in ["W1", "W2", "R1", "R2", "R3", "R4", "R5"]:
+        # Show warehouses + stores (dynamic, not hardcoded)
+        display_nodes = (
+            [(n.id, n) for n in self.network.get_warehouses()] +
+            [(n.id, n) for n in self.network.get_stores()]
+        )
+        max_display = min(len(display_nodes), 13)  # Fit in panel
+
+        for node_id, node in display_nodes[:max_display]:
             inv = snapshot.inventories.get(node_id, {})
             total = sum(inv.values())
-            node = self.network.get_node(node_id)
             capacity = node.capacity if node else 1000
             pct = total / max(1, capacity)
 
-            name = node.name[:15] if node else node_id
+            name = node_id[:12]
             bar_color = METRIC_GREEN if pct > 0.3 else METRIC_YELLOW if pct > 0.1 else METRIC_RED
 
             draw.text((x + 15, y), name, fill=MUTED_TEXT, font=self.font_sm)
 
             # Mini bar
-            bar_x = x + 120
-            bar_w = panel_w - 140
+            bar_x = x + 105
+            bar_w = panel_w - 130
             draw.rectangle([(bar_x, y+2), (bar_x + bar_w, y + 12)],
                           fill=(30, 35, 50), outline=PANEL_BORDER)
             draw.rectangle([(bar_x, y+2), (bar_x + int(bar_w * min(1, pct)), y + 12)],
                           fill=bar_color)
 
             # Value
-            draw.text((bar_x + bar_w + 5, y), str(total), fill=TEXT_COLOR, font=self.font_sm)
-            y += 18
+            draw.text((bar_x + bar_w + 5, y), f"{total:,}", fill=TEXT_COLOR, font=self.font_sm)
+            y += 16
 
         y += 10
         draw.line([(x + 10, y), (self.WIDTH - 20, y)], fill=PANEL_BORDER)
