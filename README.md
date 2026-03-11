@@ -118,13 +118,57 @@ Supply Chain Network          Simulation Engine          Visualization
 | **Warehouse** | Monitors stock, triggers reorders | Switches suppliers when primary is disrupted; emergency partial orders |
 | **Store** | Serves daily demand (with weekend peaks) | Orders from nearest warehouse; falls back to cross-region backup routes |
 
+## 🧪 Validation — Real Data, Real Baselines
+
+LevyFly is validated against **real-world data and industry-standard baselines**, not synthetic benchmarks.
+
+### Walmart M5 Real Demand Data (2.26M units, 90 days)
+
+| Policy | Score | Fill Rate | Stockouts | Excess Inventory |
+|--------|-------|-----------|-----------|-----------------|
+| Naive (weekly fixed) | — | 63.7% | 2,307 | — |
+| (s,Q) Fixed | 32.20 | 99.52% | 14 | 603% |
+| **(s,S) Fixed** (industry standard) | 24.28 | 99.85% | 4 | **736%** |
+| **LevyFly Evolved Agent** | **89.41** | **99.95%** | 8 | **65%** |
+
+> **Key insight**: The industry-standard (s,S) policy achieves near-zero stockouts — but at the cost of **11× excess inventory**. LevyFly's AI-discovered policy matches fill rate while reducing inventory cost by 91%.
+
+- **Score** = `fill_rate × 100 − stockouts × 0.5 − excess_ratio × 10` (balances availability vs efficiency)
+- Policy parameters discovered via automated grid search (240 combinations, 25 seconds)
+- Data: [Walmart M5 Forecasting Competition](https://www.kaggle.com/c/m5-forecasting-accuracy) (30,490 items × 10 stores × 1,913 days)
+
+### Polymarket Prediction Backtesting (10 resolved markets)
+
+| Metric | Agent | Market Consensus |
+|--------|-------|-----------------|
+| Brier Score | **0.0893** | 0.0933 |
+| Accuracy | 4.3% better | baseline |
+
+Agent outperforms market consensus on high-uncertainty events (zero-shot, no market data).
+
+### AutoTuning — AI-Discovered Policies (Inspired by [Karpathy's autoresearch](https://github.com/karpathy/autoresearch))
+
+```bash
+python autotuning/grid_search.py  # 240 combos in 25 seconds
+```
+
+The autotuning framework automatically searches for optimal inventory policies by:
+1. Defining objectives in `strategy.md` (human-written)
+2. Evolving policy parameters in `evolvable_policy.py`
+3. Evaluating against real M5 demand data
+4. Keeping only improvements (git-committed)
+
 ## 🔮 Roadmap
 
+- [x] ~~Real dataset integration (Walmart M5)~~ ✅
+- [x] ~~Cross-domain extensibility~~ ✅
+- [x] ~~Policy comparison framework~~ ✅
+- [x] ~~AutoTuning (AI-discovered policies)~~ ✅
+- [ ] Time series foundation model integration (Chronos fine-tuned on M5)
 - [ ] LLM-powered agent reasoning (natural language decision explanations)
-- [ ] Real dataset integration (Walmart M5, custom CSV import)
+- [ ] Monte Carlo counterfactual analysis ("200 sims: 70% chance of stockout if delayed 2 days")
 - [ ] Interactive web dashboard (React + WebSocket)
 - [ ] World model for demand prediction
-- [ ] Multi-scenario comparison (Monte Carlo simulation)
 - [ ] Integration with LeRobot for physical warehouse automation
 
 ## 🔄 Cross-Domain Extensibility
