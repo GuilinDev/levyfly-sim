@@ -11,6 +11,32 @@ LevyFly is a multi-agent simulation engine for supply chain networks. Each node 
 ![Supply Chain Simulation](docs/assets/supply_chain_sim.gif)
 *Real Walmart M5 topology: 3 suppliers → 3 regional DCs → 10 stores, 90 days, Evolved Policy*
 
+### Complex Network — 1,600 Suppliers, Power Law Distribution
+
+LevyFly scales from demo networks to **production-scale complexity**. Using Walmart's real supplier-product distribution (~1,600 suppliers, 3,049 products, 10 stores), the network follows a power law: 8 giant suppliers control 8% of all products, while 720 micro-suppliers each supply 1-5 items.
+
+| Supplier Tier | Count | % of Suppliers | Products Covered |
+|--------------|-------|---------------|-----------------|
+| 🔴 Giant (300+) | 8 | 0.5% | 8% |
+| 🟠 Mega (101-300) | 40 | 2.5% | 17% |
+| 🟡 Large (41-100) | 112 | 7% | 23% |
+| 🟢 Medium (16-40) | 272 | 17% | 24% |
+| 🔵 Small (6-15) | 448 | 28% | 18% |
+| ⚪ Micro (1-5) | 720 | 45% | 10% |
+
+**What does this mean?** If a single Giant supplier goes down, **8% of all products** are disrupted across all 10 stores. This is exactly the kind of cascade risk LevyFly is built to simulate and mitigate.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/assets/network_viz_a.png" alt="Force-Directed Graph"/><br/><em>A. Force-directed — 1,600 nodes, sized by product count</em></td>
+<td width="50%"><img src="docs/assets/network_viz_b.png" alt="Chord Diagram"/><br/><em>B. Chord diagram — power law at a glance</em></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/assets/network_viz_c.png" alt="Ring Layout"/><br/><em>C. Hierarchical ring — stores → DCs → suppliers</em></td>
+<td width="50%"><img src="docs/assets/network_viz_d.png" alt="Heatmap"/><br/><em>D. Heatmap — Top 50 suppliers × 10 stores</em></td>
+</tr>
+</table>
+
 ## 🎯 Why LevyFly?
 
 | Traditional Tools | LevyFly |
@@ -169,6 +195,28 @@ Grid search found optimal parameters (`SF=1.2, OH=10, OB=0.9`). Then **Code Evol
 
 > **The key insight**: Grid search explores a fixed algorithm with different numbers. Code Evolution explores *different algorithms* — the AI discovered "order rounding", a strategy not in the original search space. This is the difference between tuning a radio dial and inventing a new antenna.
 
+### 28-Day Daily Actionable Report
+
+Every store, every day, every product — **predictions vs reality**.
+
+```bash
+python validation/walmart/daily_report.py --days 28
+```
+
+LevyFly generates a day-by-day report for each of the 10 Walmart stores across 28 days, comparing predicted demand against actual M5 sales data:
+
+| Symbol | Meaning | Threshold |
+|--------|---------|-----------|
+| ✅ | Prediction accurate | Error ≤ 15% |
+| ⚠️ | Monitor closely | Error 15–30% |
+| ❌ | Action needed | Error > 30% + stockout risk |
+
+**Example (Store CA_1, Day 3):**
+> ❌ **FOODS_3** (Supplier #0054) — Predicted: 150 | Actual: 187 | Error: +24.7%
+> ⚠️ Current inventory: 45 → **Recommend: emergency reorder 120 units**
+
+Each alert includes the specific product, its supplier, prediction error, and a concrete recommendation. Reports are generated as interactive HTML with day-by-day navigation: [`docs/reports/m5_28day_report.html`](docs/reports/m5_28day_report.html)
+
 ## 📊 End-to-End Output
 
 LevyFly generates four deliverables from a single run:
@@ -265,9 +313,10 @@ Each domain has different agents, products, disruption scenarios, and risk profi
 - [x] AutoTuning — AI-discovered policies ✅
 - [x] Time series foundation model (Chronos-2 fine-tuned on M5) ✅
 - [x] Disruption stress testing (5 scenarios × 5 policies) ✅
-- [x] Distribution validation (KS-test + determinism check) ✅
 - [x] LLM-powered agent reasoning (Mistral, 31 strategic decisions with reasoning chains) ✅
 - [x] Code Evolution — LLM rewrites strategy code, discovers algorithms beyond parameter tuning (82.61→84.50) ✅
+- [x] Complex network scaling — 1,600 suppliers with power law distribution, 4 visualization styles ✅
+- [x] 28-day daily actionable report — per-store ✅/⚠️/❌ predictions vs actuals with recommendations ✅
 - [ ] Monte Carlo counterfactual analysis ("200 sims: 70% stockout if delayed 2 days")
 - [ ] Agent explainability (What → Why → What-if audit trail)
 - [ ] Interactive web dashboard (React + WebSocket)
