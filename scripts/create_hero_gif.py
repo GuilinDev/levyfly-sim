@@ -107,9 +107,9 @@ class NetworkAnimator:
         self.data = network_data
         self.frames = []
 
-        # Center of canvas — shifted down to leave room for top banner (0-140px)
+        # Center of canvas — shifted down to keep ring fully below top banner (gradient ends at 170)
         self.center_x = CANVAS_WIDTH // 2
-        self.center_y = (140 + 680) // 2  # Center between top banner (140) and bottom banner (680)
+        self.center_y = 435  # top of ring = 435-255 = 180, safely below banner gradient (170)
 
         # Calculate positions
         self._calculate_positions()
@@ -183,8 +183,8 @@ class NetworkAnimator:
     def _draw_background(self, draw, frame):
         """Draw the dark background with subtle grid."""
         # Background already filled, add subtle radial gradient feel with concentric circles
-        for r in range(350, 50, -50):
-            gray = 15 + (350 - r) // 30
+        for r in range(260, 50, -50):
+            gray = 15 + (260 - r) // 30
             draw.ellipse(
                 [self.center_x - r, self.center_y - r,
                  self.center_x + r, self.center_y + r],
