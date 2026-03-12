@@ -107,9 +107,9 @@ class NetworkAnimator:
         self.data = network_data
         self.frames = []
 
-        # Center of canvas
+        # Center of canvas — shifted down to leave room for top banner (0-140px)
         self.center_x = CANVAS_WIDTH // 2
-        self.center_y = CANVAS_HEIGHT // 2 + 30  # Slightly down to leave room for title
+        self.center_y = (140 + 680) // 2  # Center between top banner (140) and bottom banner (680)
 
         # Calculate positions
         self._calculate_positions()
@@ -128,7 +128,7 @@ class NetworkAnimator:
         """Calculate positions for all nodes in a radial layout."""
         # Stores in center ring (squares)
         self.store_positions = {}
-        store_radius = 120
+        store_radius = 80
         store_pos_list = calculate_circular_layout(
             len(self.data.stores),
             self.center_x, self.center_y,
@@ -141,12 +141,12 @@ class NetworkAnimator:
         # Suppliers in outer rings by tier
         self.supplier_positions = {}
         tier_radii = {
-            "giant": 200,
-            "mega": 250,
-            "large": 300,
-            "medium": 340,
-            "small": 370,
-            "micro": 395,
+            "giant": 130,
+            "mega": 160,
+            "large": 195,
+            "medium": 220,
+            "small": 240,
+            "micro": 255,
         }
 
         # Group suppliers by tier
@@ -183,14 +183,31 @@ class NetworkAnimator:
     def _draw_background(self, draw, frame):
         """Draw the dark background with subtle grid."""
         # Background already filled, add subtle radial gradient feel with concentric circles
-        for r in range(400, 50, -50):
-            alpha = int(10 + (400 - r) * 0.02)
-            gray = 15 + (400 - r) // 30
+        for r in range(350, 50, -50):
+            gray = 15 + (350 - r) // 30
             draw.ellipse(
                 [self.center_x - r, self.center_y - r,
                  self.center_x + r, self.center_y + r],
                 outline=(gray, gray, gray)
             )
+
+    def _draw_top_banner(self, draw):
+        """Draw opaque dark banner at top for title/subtitle text."""
+        draw.rectangle([0, 0, CANVAS_WIDTH, 140], fill=BG_COLOR)
+        # Gradient fade from opaque to transparent
+        for y in range(140, 170):
+            alpha_frac = (170 - y) / 30
+            gray = int(BG_COLOR[0] * alpha_frac)
+            draw.line([(0, y), (CANVAS_WIDTH, y)], fill=(gray, gray, gray))
+
+    def _draw_bottom_banner(self, draw):
+        """Draw opaque dark banner at bottom for stats text."""
+        # Gradient fade
+        for y in range(660, 690):
+            alpha_frac = (y - 660) / 30
+            gray = int(BG_COLOR[0] * alpha_frac)
+            draw.line([(0, y), (CANVAS_WIDTH, y)], fill=(gray, gray, gray))
+        draw.rectangle([0, 690, CANVAS_WIDTH, CANVAS_HEIGHT], fill=BG_COLOR)
 
     def _draw_title(self, draw, text, alpha=255):
         """Draw title at the top."""
@@ -311,7 +328,51 @@ class NetworkAnimator:
         else:
             self._draw_phase6(draw, frame_num)
 
+        # Draw banners LAST so text is always on top of network
+        self._draw_top_banner(draw)
+        self._draw_bottom_banner(draw)
+
+        # Re-draw text on top of banners (each phase already drew text,
+        # but it got covered by banners — redraw from phase state)
+        self._redraw_text_for_frame(draw, frame_num)
+
         return img
+
+    def _redraw_text_for_frame(self, draw, frame_num):
+        """Redraw text on top of banners for the current frame."""
+        if frame_num <= PHASE_1[1]:
+            progress = (frame_num - PHASE_1[0]) / (PHASE_1[1] - PHASE_1[0])
+            self._draw_title(draw, "LevyFly - 1,600 Suppliers, 10 Stores")
+            if progress > 0.7:
+                self._draw_stats(draw, "Building complex supply chain network...")
+        elif frame_num <= PHASE_2[1]:
+            self._draw_title(draw, "Supply Chain in Motion")
+            self._draw_subtitle(draw, "3,049 products flowing | Fill Rate: 99.9%", y=80, color=GREEN_COLOR)
+            self._draw_stats(draw, "Optimized supply flow across all channels")
+        elif frame_num <= PHASE_3[1]:
+            products_at_risk = self.disrupted_supplier.product_count
+            self._draw_title(draw, "⚡ DISRUPTION!")
+            self._draw_subtitle(draw, f"Giant Supplier DOWN - {products_at_risk} products at risk",
+                               y=80, color=RED_COLOR)
+        elif frame_num <= PHASE_4[1]:
+            progress = (frame_num - PHASE_4[0]) / (PHASE_4[1] - PHASE_4[0])
+            stockouts = int(progress * 8)
+            self._draw_title(draw, "Cascade Impact")
+            self._draw_subtitle(draw, f"3 stores impacted, {stockouts}% of products disrupted",
+                               y=80, color=YELLOW_COLOR)
+            self._draw_stats(draw, "Traditional systems would face stockouts...")
+        elif frame_num <= PHASE_5[1]:
+            self._draw_title(draw, "AI Agent Responds")
+            self._draw_subtitle(draw, "AI reroutes supply in 2.3 days | 0 stockouts",
+                               y=80, color=GREEN_COLOR)
+            self._draw_stats(draw, "LevyFly AI maintains service continuity")
+        else:
+            progress = (frame_num - PHASE_6[0]) / (PHASE_6[1] - PHASE_6[0])
+            self._draw_title(draw, "LevyFly - Results")
+            if progress > 0.2:
+                self._draw_stats(draw, "Traditional (s,S): 736% excess  |  LevyFly AI: 65% excess  |  3.7x better", y=710)
+            if progress > 0.5:
+                self._draw_subtitle(draw, "AI agents that learn from your real data", y=80, color=ACCENT_COLOR)
 
     def _draw_phase1(self, draw, frame):
         """Phase 1: Building Network - suppliers appear tier by tier."""
