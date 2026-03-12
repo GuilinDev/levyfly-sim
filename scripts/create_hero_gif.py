@@ -17,7 +17,7 @@ from simulation.complex_network import build_complex_network, SUPPLIER_TIERS
 
 # Configuration
 CANVAS_WIDTH = 1200
-CANVAS_HEIGHT = 800
+CANVAS_HEIGHT = 1000
 FPS = 20  # Reduced from 24 for smaller file size
 TOTAL_FRAMES = 160  # Reduced from 200 for smaller file size (~8 sec at 20fps)
 
@@ -107,9 +107,11 @@ class NetworkAnimator:
         self.data = network_data
         self.frames = []
 
-        # Center of canvas — shifted down to keep ring fully below top banner (gradient ends at 170)
+        # Center of canvas — centered in safe zone between banners
+        # Top banner: 0-140 (gradient to 170). Bottom banner: 860-1000 (gradient from 830).
+        # Safe zone: 170-830 = 660px. Center = 170 + 330 = 500
         self.center_x = CANVAS_WIDTH // 2
-        self.center_y = 435  # top of ring = 435-255 = 180, safely below banner gradient (170)
+        self.center_y = 500
 
         # Calculate positions
         self._calculate_positions()
@@ -203,11 +205,11 @@ class NetworkAnimator:
     def _draw_bottom_banner(self, draw):
         """Draw opaque dark banner at bottom for stats text."""
         # Gradient fade
-        for y in range(660, 690):
-            alpha_frac = (y - 660) / 30
+        for y in range(830, 860):
+            alpha_frac = (y - 830) / 30
             gray = int(BG_COLOR[0] * alpha_frac)
             draw.line([(0, y), (CANVAS_WIDTH, y)], fill=(gray, gray, gray))
-        draw.rectangle([0, 690, CANVAS_WIDTH, CANVAS_HEIGHT], fill=BG_COLOR)
+        draw.rectangle([0, 860, CANVAS_WIDTH, CANVAS_HEIGHT], fill=BG_COLOR)
 
     def _draw_title(self, draw, text, alpha=255):
         """Draw title at the top."""
@@ -227,7 +229,7 @@ class NetworkAnimator:
         x = (CANVAS_WIDTH - text_width) // 2
         draw.text((x, y), text, fill=color, font=self.subtitle_font)
 
-    def _draw_stats(self, draw, stats_text, y=740):
+    def _draw_stats(self, draw, stats_text, y=910):
         """Draw statistics at the bottom."""
         bbox = draw.textbbox((0, 0), stats_text, font=self.stat_font)
         text_width = bbox[2] - bbox[0]
@@ -370,7 +372,7 @@ class NetworkAnimator:
             progress = (frame_num - PHASE_6[0]) / (PHASE_6[1] - PHASE_6[0])
             self._draw_title(draw, "LevyFly - Results")
             if progress > 0.2:
-                self._draw_stats(draw, "Traditional (s,S): 736% excess  |  LevyFly AI: 65% excess  |  3.7x better", y=710)
+                self._draw_stats(draw, "Traditional (s,S): 736% excess  |  LevyFly AI: 65% excess  |  3.7x better")
             if progress > 0.5:
                 self._draw_subtitle(draw, "AI agents that learn from your real data", y=80, color=ACCENT_COLOR)
 
@@ -658,7 +660,7 @@ class NetworkAnimator:
             stat_alpha = int(min(255, (progress - 0.2) * 2 * 255))
 
             # Traditional vs LevyFly comparison
-            y_start = 680
+            y_start = 880
 
             # Draw comparison stats
             trad_text = "Traditional (s,S): 736% excess inventory"
