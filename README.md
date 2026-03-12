@@ -4,7 +4,7 @@
 
 > Drop in your data. Watch AI agents discover strategies that outperform industry standards by 3.7×.
 
-![LevyFly Network](docs/assets/network_hero.gif)
+![LevyFly Network](docs/assets/network_hero_v4.gif)
 
 ## The Problem
 
