@@ -1,27 +1,28 @@
 # ⚡ LevyFly
 
-**AI agents that manage your supply chain — and get smarter every day.**
+**AI supply chain optimization you can set up in a day — not six months.**
 
-> Drop in your data. Watch AI agents discover strategies that outperform industry standards by 3.7×.
+> Enterprise SCM costs $500K+ and takes a year to deploy. LevyFly gives you AI-powered inventory management with `pip install` and your CSV data.
 
 ![LevyFly Network](docs/assets/network_hero_v4.gif)
 
 ## The Problem
 
-Traditional supply chain tools use static reorder rules. They achieve 99.85% fill rate — but sit on **736% excess inventory** to do it. When disruptions hit, they break.
+Mid-size companies are stuck between two bad options: (1) static reorder rules that overstock by 7× to avoid stockouts, or (2) $500K+ enterprise systems (SAP, Oracle SCM) that take 12-18 months to deploy.
 
 ## What LevyFly Does
 
 LevyFly runs a team of AI agents on your supply chain data. Each supplier, warehouse, and store is an autonomous agent that forecasts demand, adapts to disruptions, and discovers optimal strategies **automatically**.
 
-| | Traditional (s,S) | LevyFly AI |
+| Metric | Standard (s,S) Policy | LevyFly AI |
 |---|---|---|
 | Fill Rate | 99.85% | **99.95%** |
-| Excess Inventory | 736% | **65%** |
+| Excess Inventory | 736% (untuned) | **65%** |
 | Disruption Response | Breaks | Reroutes autonomously |
-| Strategy Discovery | Manual tuning | AI evolves code |
+| Setup Time | Months of consulting | **One command** |
+| Cost | $200K+ | **Open source** |
 
-> Validated on **Walmart M5** real demand data (2.26M units, 30,490 SKUs, 10 stores).
+> Validated on **Walmart M5** real demand data (2.26M units, 30,490 SKUs, 10 stores). Compared against standard (s,S) policy — large enterprises with dedicated teams achieve better baselines. LevyFly's value is bringing AI-level optimization to teams without supply chain PhDs.
 
 ## Quick Start
 
