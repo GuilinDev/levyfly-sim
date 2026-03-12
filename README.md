@@ -79,6 +79,26 @@ python validation/walmart/daily_report.py --days 28
 - **Single supplier outage**: LevyFly *improves* (+1.8%) by proactively buffering
 - **Extended disruption (30 days)**: Industry standard collapses (-101%). LevyFly holds at -46%.
 
+### Cascade Simulator
+
+What happens when the biggest supplier fails? The cascade simulator maps the domino effect across 1,600 suppliers.
+
+```bash
+python -m simulation.cascade_simulator --scenario worst_case
+# → 8 giant suppliers fail → 244 products at risk → 10 stores impacted
+# → 3 secondary failures from capacity overload → 18-day recovery estimate
+```
+
+### Anomaly Detection
+
+Can't manually review 30K products daily. The anomaly detector surfaces only items that deviate from expected patterns.
+
+```bash
+python -m simulation.anomaly_detector --days 28 --top 50
+# → 847 anomalies detected → 23 CRITICAL (>3 std deviation)
+# → Top: CA_1/FOODS_3 day 12: +4.2 std spike, demand doubled
+```
+
 ### 3 Industries, Zero Code Changes
 
 Same engine. Different CSV configs.
@@ -107,11 +127,13 @@ Your CSV Data → Multi-Agent Engine → AI Layer → Reports + GIF + JSON
 - [x] 1,600-supplier complex network (power law)
 - [x] 28-day daily actionable reports
 - [x] Disruption stress testing (5 scenarios)
+- [x] Cascade simulator (supplier failure propagation)
+- [x] Anomaly detector (noise filtering from 30K products)
 - [ ] Interactive web dashboard
 - [ ] Monte Carlo counterfactual analysis
 - [ ] Agent explainability audit trail
 
-**11/14 complete.** [Full technical details →](docs/README_full.md)
+**13/16 complete.** [Full technical details →](docs/README_full.md)
 
 ## Team
 
