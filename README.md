@@ -64,39 +64,64 @@ python validation/walmart/action_list.py --days 28
 
 | Symbol | Meaning | Trigger |
 |--------|---------|---------|
-| 🚨 | URGENT — order now | < 3 days of stock left |
-| 📦 | RESTOCK — place order | < 7 days of stock left |
-| 📉 | REDUCE — cut next order | > 21 days of stock (overstocked) |
-| ✅ | OK — no action | 7–21 days of coverage |
+| 🚨 URGENT | Order immediately | < 3 days of stock |
+| 📦 RESTOCK | Place order today | < 7 days of stock |
+| 📉 REDUCE | Cut next order | > 21 days (overstocked) |
+| ✅ OK | No action needed | 7–21 days coverage |
 
-**Real output from M5 data** (selected days):
+**28-day overview** (real M5 data, 10 stores × 7 products):
+
+| Day | 🚨 Urgent | 📦 Restock | 📉 Reduce | ✅ OK | What's happening |
+|-----|-----------|------------|-----------|-------|------------------|
+| 1 | 0 | 0 | 48 | 22 | Overstocked everywhere — cut orders |
+| 7 | 0 | 0 | 46 | 24 | Still burning through excess inventory |
+| 10 | 0 | 4 | 41 | 25 | First restocks needed — stock running low |
+| 14 | **1** | 11 | 30 | 28 | 🚨 CA_3 FOODS_2 down to 2.2 days! |
+| 18 | **3** | 13 | 24 | 30 | Multiple stores need emergency orders |
+| 21 | 1 | 11 | 18 | 40 | System stabilizing after restocks arrive |
+| 25 | 3 | 11 | 15 | 41 | New urgencies: TX_2 running low |
+| 28 | **2** | 12 | 14 | 42 | TX_2 HOBBIES_1 + TX_3 HOBBIES_2 critical |
+
+**Example: Day 14 action list** — the morning a store manager opens this:
 
 ```
-📋 DAY 14
-  🚨 Urgent: 1 | 📦 Restock: 11 | 📉 Reduce: 30 | ✅ OK: 28
+📋 DAY 14 — 1 urgent, 11 restock, 30 reduce
 
-  📍 CA_3:
-    🚨 FOODS_2 — ORDER 3,586 units NOW
-       Inventory: 1,683 | Daily demand: ~752 | Coverage: 2.2 days
-    📦 FOODS_3 — Restock 10,160 units
-       Inventory: 8,087 | Daily demand: ~2,606 | Coverage: 3.1 days
-    📦 HOUSEHOLD_2 — Restock 912 units
-       Inventory: 994 | Daily demand: ~272 | Coverage: 3.7 days
+📍 CA_3 (California Store #3):
+  🚨 FOODS_2     — ORDER 3,586 units NOW     (inv: 1,683 | demand: ~752/day | 2.2 days left)
+  📦 FOODS_3     — Restock 10,160 units       (inv: 8,087 | demand: ~2,606/day | 3.1 days left)
+  📦 HOUSEHOLD_2 — Restock 912 units          (inv: 994   | demand: ~272/day  | 3.7 days left)
+  📦 FOODS_1     — Restock 447 units          (inv: 1,789 | demand: ~319/day  | 5.6 days left)
+  📦 HOBBIES_1   — Restock 410 units          (inv: 2,409 | demand: ~402/day  | 6.0 days left)
 
-📋 DAY 28
-  🚨 Urgent: 2 | 📦 Restock: 12 | 📉 Reduce: 14 | ✅ OK: 42
+📍 TX_2 (Texas Store #2):
+  📦 HOBBIES_2   — Restock 91 units           (inv: 106   | demand: ~28/day   | 3.8 days left)
 
-  📍 TX_2:
-    🚨 HOBBIES_1 — ORDER 1,171 units NOW
-       Inventory: 752 | Daily demand: ~274 | Coverage: 2.7 days
-  📍 TX_3:
-    🚨 HOBBIES_2 — ORDER 95 units NOW
-       Inventory: 45 | Daily demand: ~20 | Coverage: 2.2 days
+📍 WI_3 (Wisconsin Store #3):
+  📦 FOODS_2     — Restock 1,936 units        (inv: 2,551 | demand: ~641/day  | 4.0 days left)
+  📦 FOODS_3     — Restock 6,316 units        (inv: 10,273| demand: ~2,369/day| 4.3 days left)
 ```
 
-28-day summary: 32 urgent alerts, 203 restock orders, peak urgency on Day 16 (4 items). Each action shows the specific product, current inventory, forecast demand, and exact quantity to order.
+**Example: Day 21** — different stores, different products:
 
-Full reports also available as interactive HTML: [docs/reports/m5_28day_report.html](docs/reports/m5_28day_report.html)
+```
+📋 DAY 21 — 1 urgent, 11 restock, 18 reduce
+
+📍 CA_3:
+  🚨 HOUSEHOLD_1 — ORDER 2,037 units NOW      (inv: 1,325 | demand: ~480/day | 2.8 days left)
+
+📍 WI_1 (Wisconsin Store #1):
+  📦 HOBBIES_1   — Restock 1,232 units        (inv: 1,148 | demand: ~340/day | 3.4 days left)
+  📦 FOODS_1     — Restock 543 units          (inv: 1,126 | demand: ~238/day | 4.7 days left)
+
+📍 TX_2:
+  📦 FOODS_3     — Restock 4,473 units        (inv: 6,441 | demand: ~1,559/day| 4.1 days left)
+  📦 FOODS_2     — Restock 955 units          (inv: 2,563 | demand: ~502/day  | 5.1 days left)
+```
+
+**28-day totals**: 32 urgent alerts, 203 restock orders, 867 reduce recommendations. Peak urgency: Day 16 (4 items across CA_1, CA_2, CA_3, WI_3).
+
+30,000 products are too many to review manually — the [anomaly detector](#anomaly-detection) surfaces only items that deviate from expected patterns.
 
 ### Survives Chaos
 
