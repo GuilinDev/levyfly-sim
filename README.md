@@ -56,25 +56,38 @@ Code Evolution is the key: an LLM reads strategy objectives, proposes algorithmi
 
 ### 28-Day Daily Actionable Report
 
-Every store, every day, every product — predictions vs reality.
+Every store, every day, every product — predictions vs reality across 10 Walmart stores.
 
 ```bash
 python validation/walmart/daily_report.py --days 28
 ```
 
-LevyFly generates a day-by-day report for each of the 10 Walmart stores across 28 days, comparing predicted demand against actual M5 sales data:
-
 | Symbol | Meaning | Threshold |
 |--------|---------|-----------|
 | ✅ | Prediction accurate | Error ≤ 15% |
 | ⚠️ | Monitor closely | Error 15–30% |
-| ❌ | Action needed | Error > 30% + stockout risk |
+| ❌ | Action needed | Error > 30% |
 
-Example (Store CA_1, Day 3):
-> ❌ FOODS_3 (Supplier #0054) — Predicted: 150 | Actual: 187 | Error: +24.7%
-> ⚠️ Current inventory: 45 → Recommend: emergency reorder 120 units
+**Real output from M5 data** (Store CA_1, selected days):
 
-Each alert includes the specific product, its supplier, prediction error, and a concrete recommendation. Reports are generated as interactive HTML with day-by-day navigation: [docs/reports/m5_28day_report.html](docs/reports/m5_28day_report.html)
+```
+Day 1:  ✅ HOUSEHOLD_1 — Predicted: 361 | Actual: 361 | 0.0% ✓
+Day 3:  ❌ HOBBIES_2  — Predicted: 14  | Actual: 6   | 133% → Review forecast model
+Day 3:  ⚠️ HOUSEHOLD_1 — Predicted: 330 | Actual: 279 | 18%  → Monitor inventory
+Day 7:  ✅ HOUSEHOLD_2 — Predicted: 144 | Actual: 143 | 0.7% ✓
+Day 14: ✅ HOBBIES_1  — Predicted: 472 | Actual: 443 | 6.5% ✓
+Day 21: ❌ HOBBIES_1  — Predicted: 376 | Actual: 288 | 31%  → Review forecast model
+Day 28: ⚠️ HOUSEHOLD_1 — Predicted: 318 | Actual: 257 | 24%  → Reduce next order
+```
+
+Accuracy degrades over time (as expected — longer horizon = harder to predict):
+
+```
+Day 1: 100% → Day 7: 50% → Day 14: 59% → Day 21: 50% → Day 28: 56%
+Overall: 40.4% accuracy | 100% fill rate | 0 stockouts | Score: 79.8
+```
+
+Each alert includes product, supplier, error %, and a concrete recommendation. Full reports are generated as interactive HTML with day-by-day navigation: [docs/reports/m5_28day_report.html](docs/reports/m5_28day_report.html)
 
 30,000 products are too many to review manually — the anomaly detector surfaces only items that deviate from expected patterns:
 
