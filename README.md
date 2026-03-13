@@ -54,51 +54,33 @@ Three levels of intelligence, each building on the last:
 
 Code Evolution is the key: an LLM reads strategy objectives, proposes algorithmic changes, tests against real data, and commits improvements. It discovered "order rounding" — a strategy not in the original search space.
 
-### 28-Day Daily Action List
+### 28-Day Daily Actionable Report
 
-The core output isn't charts — it's **a daily to-do list for each store manager.**
-
-30,000 products are too many to review manually. LevyFly's anomaly detector filters down to only the items that need attention, then generates a day-by-day action list with predictions vs actuals:
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║  STORE CA_1  │  Day 3  │  Tuesday                           ║
-║  Accuracy: 87%  │  3 alerts  │  1 critical                  ║
-╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  ❌ FOODS_3 (Supplier #0054)                                 ║
-║     Predicted: 150  │  Actual: 187  │  Error: +24.7%         ║
-║     Deviation: +3.2σ (CRITICAL SPIKE)                        ║
-║     → Emergency reorder 120 units from SUP_0054              ║
-║     → Check: promotion or local event driving demand?        ║
-║                                                              ║
-║  ⚠️ HOUSEHOLD_1 (Supplier #0892)                             ║
-║     Predicted: 95  │  Actual: 112  │  Error: +17.9%          ║
-║     → Monitor tomorrow. If trend continues, increase order.  ║
-║                                                              ║
-║  ⚠️ FOODS_2 (Supplier #0341)                                 ║
-║     Predicted: 220  │  Actual: 178  │  Error: -19.1%         ║
-║     → Demand dropping. Reduce next order to avoid excess.    ║
-║                                                              ║
-║  ✅ HOBBIES_1 — 73 vs predicted 80 (-8.8%) ✓                 ║
-║  ✅ FOODS_1 — 310 vs predicted 298 (+4.0%) ✓                 ║
-║  ✅ ... (4 more products within tolerance)                    ║
-║                                                              ║
-╠══════════════════════════════════════════════════════════════╣
-║  📊 28-Day Accuracy Trend:                                   ║
-║  Day 1: 94% → Day 7: 91% → Day 14: 85% → Day 28: 78%      ║
-║  (Prediction accuracy degrades over time — as expected)      ║
-╚══════════════════════════════════════════════════════════════╝
-```
-
-Each alert is **actionable**: specific product, specific supplier, specific recommendation. No data science degree needed.
+Every store, every day, every product — predictions vs reality.
 
 ```bash
-python validation/walmart/daily_report.py --days 28          # Full HTML report
-python -m simulation.anomaly_detector --days 28 --top 50     # Anomaly summary
+python validation/walmart/daily_report.py --days 28
 ```
 
-> **Why this matters**: Traditional dashboards show 500 charts. Store managers need 5 action items. LevyFly bridges that gap — AI does the analysis, humans make the calls.
+LevyFly generates a day-by-day report for each of the 10 Walmart stores across 28 days, comparing predicted demand against actual M5 sales data:
+
+| Symbol | Meaning | Threshold |
+|--------|---------|-----------|
+| ✅ | Prediction accurate | Error ≤ 15% |
+| ⚠️ | Monitor closely | Error 15–30% |
+| ❌ | Action needed | Error > 30% + stockout risk |
+
+Example (Store CA_1, Day 3):
+> ❌ FOODS_3 (Supplier #0054) — Predicted: 150 | Actual: 187 | Error: +24.7%
+> ⚠️ Current inventory: 45 → Recommend: emergency reorder 120 units
+
+Each alert includes the specific product, its supplier, prediction error, and a concrete recommendation. Reports are generated as interactive HTML with day-by-day navigation: [docs/reports/m5_28day_report.html](docs/reports/m5_28day_report.html)
+
+30,000 products are too many to review manually — the anomaly detector surfaces only items that deviate from expected patterns:
+
+```bash
+python -m simulation.anomaly_detector --days 28 --top 50
+```
 
 ### Survives Chaos
 
