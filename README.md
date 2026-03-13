@@ -54,46 +54,49 @@ Three levels of intelligence, each building on the last:
 
 Code Evolution is the key: an LLM reads strategy objectives, proposes algorithmic changes, tests against real data, and commits improvements. It discovered "order rounding" — a strategy not in the original search space.
 
-### 28-Day Daily Actionable Report
+### 28-Day Daily Action List
 
-Every store, every day, every product — predictions vs reality across 10 Walmart stores.
-
-```bash
-python validation/walmart/daily_report.py --days 28
-```
-
-| Symbol | Meaning | Threshold |
-|--------|---------|-----------|
-| ✅ | Prediction accurate | Error ≤ 15% |
-| ⚠️ | Monitor closely | Error 15–30% |
-| ❌ | Action needed | Error > 30% |
-
-**Real output from M5 data** (Store CA_1, selected days):
-
-```
-Day 1:  ✅ HOUSEHOLD_1 — Predicted: 361 | Actual: 361 | 0.0% ✓
-Day 3:  ❌ HOBBIES_2  — Predicted: 14  | Actual: 6   | 133% → Review forecast model
-Day 3:  ⚠️ HOUSEHOLD_1 — Predicted: 330 | Actual: 279 | 18%  → Monitor inventory
-Day 7:  ✅ HOUSEHOLD_2 — Predicted: 144 | Actual: 143 | 0.7% ✓
-Day 14: ✅ HOBBIES_1  — Predicted: 472 | Actual: 443 | 6.5% ✓
-Day 21: ❌ HOBBIES_1  — Predicted: 376 | Actual: 288 | 31%  → Review forecast model
-Day 28: ⚠️ HOUSEHOLD_1 — Predicted: 318 | Actual: 257 | 24%  → Reduce next order
-```
-
-Accuracy degrades over time (as expected — longer horizon = harder to predict):
-
-```
-Day 1: 100% → Day 7: 50% → Day 14: 59% → Day 21: 50% → Day 28: 56%
-Overall: 40.4% accuracy | 100% fill rate | 0 stockouts | Score: 79.8
-```
-
-Each alert includes product, supplier, error %, and a concrete recommendation. Full reports are generated as interactive HTML with day-by-day navigation: [docs/reports/m5_28day_report.html](docs/reports/m5_28day_report.html)
-
-30,000 products are too many to review manually — the anomaly detector surfaces only items that deviate from expected patterns:
+What should each store do **today**? Not charts — an operations checklist.
 
 ```bash
-python -m simulation.anomaly_detector --days 28 --top 50
+python validation/walmart/action_list.py --days 28
 ```
+
+| Symbol | Meaning | Trigger |
+|--------|---------|---------|
+| 🚨 | URGENT — order now | < 3 days of stock left |
+| 📦 | RESTOCK — place order | < 7 days of stock left |
+| 📉 | REDUCE — cut next order | > 21 days of stock (overstocked) |
+| ✅ | OK — no action | 7–21 days of coverage |
+
+**Real output from M5 data** (selected days):
+
+```
+📋 DAY 14
+  🚨 Urgent: 1 | 📦 Restock: 11 | 📉 Reduce: 30 | ✅ OK: 28
+
+  📍 CA_3:
+    🚨 FOODS_2 — ORDER 3,586 units NOW
+       Inventory: 1,683 | Daily demand: ~752 | Coverage: 2.2 days
+    📦 FOODS_3 — Restock 10,160 units
+       Inventory: 8,087 | Daily demand: ~2,606 | Coverage: 3.1 days
+    📦 HOUSEHOLD_2 — Restock 912 units
+       Inventory: 994 | Daily demand: ~272 | Coverage: 3.7 days
+
+📋 DAY 28
+  🚨 Urgent: 2 | 📦 Restock: 12 | 📉 Reduce: 14 | ✅ OK: 42
+
+  📍 TX_2:
+    🚨 HOBBIES_1 — ORDER 1,171 units NOW
+       Inventory: 752 | Daily demand: ~274 | Coverage: 2.7 days
+  📍 TX_3:
+    🚨 HOBBIES_2 — ORDER 95 units NOW
+       Inventory: 45 | Daily demand: ~20 | Coverage: 2.2 days
+```
+
+28-day summary: 32 urgent alerts, 203 restock orders, peak urgency on Day 16 (4 items). Each action shows the specific product, current inventory, forecast demand, and exact quantity to order.
+
+Full reports also available as interactive HTML: [docs/reports/m5_28day_report.html](docs/reports/m5_28day_report.html)
 
 ### Survives Chaos
 
